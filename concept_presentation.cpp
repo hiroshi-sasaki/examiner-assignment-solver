@@ -21,15 +21,6 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
     int sum_student = 0;
     for (auto professor : professors) {
         sum_student += (int)professor.students.size();
-    }
-
-    int half = (sum_student + 1) / 2;
-
-    std::sort(professors.begin(), professors.end(), [](auto a, auto b) -> bool {
-        return a.students.size() > b.students.size();
-    });
-
-    for (auto professor : professors) {
         if (professor.is_possible[0] == 'o' &&
             professor.is_possible[1] == 'x') {
             assignment[0].emplace_back(professor.name);
@@ -47,7 +38,17 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
             for (auto student : professor.students) {
                 plan[1].emplace_back(student.name, student.supervisor);
             }
-        } else {
+        }
+    }
+
+    int half = (sum_student + 1) / 2;
+
+    std::sort(professors.begin(), professors.end(), [](auto a, auto b) -> bool {
+        return a.students.size() > b.students.size();
+    });
+
+    for (auto professor : professors) {
+        if(professor.is_possible[0] == professor.is_possible[1]) {
             int student_count = (int)professor.students.size();
             bool can_assign = professor.is_possible[0] == 'o' &&
                               professor.is_possible[1] == 'o';
