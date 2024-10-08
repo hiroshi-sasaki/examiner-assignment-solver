@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <limits>
 #include <map>
 
 #include "user.hpp"
@@ -13,9 +14,10 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &vec) {
 std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
     std::vector<Professor> professors, int k) {
     const int window = 2;
-    const int th = 4;
+    const int type_count = 3;
     std::vector plan(window, std::vector<Slot>());
-    std::vector assignment(window + 1, std::vector<std::string>());
+    std::vector assignments(
+        window, std::vector(type_count, std::vector<std::string>()));
     std::vector<std::map<std::string, int>> assignment_count(window);
 
     int sum_student = 0;
@@ -23,20 +25,22 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
         sum_student += (int)professor.students.size();
         if (professor.is_possible[0] == 'o' &&
             professor.is_possible[1] == 'x') {
-            assignment[0].emplace_back(professor.name);
+            assignments[0][static_cast<unsigned>(professor.type)].emplace_back(
+                professor.name);
             assignment_count[0][professor.name] +=
                 (int)professor.students.size();
             for (auto student : professor.students) {
-                plan[0].emplace_back(student.name, student.supervisor);
+                plan[0].emplace_back(student.name, professor, true);
             }
         } else if (professor.is_possible[0] == 'x' &&
                    professor.is_possible[1] == 'o') {
-            assignment[1].emplace_back(professor.name);
+            assignments[1][static_cast<unsigned>(professor.type)].emplace_back(
+                professor.name);
             assignment_count[1][professor.name] +=
                 (int)professor.students.size();
 
             for (auto student : professor.students) {
-                plan[1].emplace_back(student.name, student.supervisor);
+                plan[1].emplace_back(student.name, professor, true);
             }
         }
     }
@@ -48,7 +52,7 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
     });
 
     for (auto professor : professors) {
-        if(professor.is_possible[0] == professor.is_possible[1]) {
+        if (professor.is_possible[0] == professor.is_possible[1]) {
             int student_count = (int)professor.students.size();
             bool can_assign = professor.is_possible[0] == 'o' &&
                               professor.is_possible[1] == 'o';
@@ -56,29 +60,35 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
             if (student_count == 0) {
                 if (can_assign) {
                     int index = 0;
-                    if (assignment[0].size() > assignment[1].size()) {
+                    int type = static_cast<unsigned>(professor.type);
+                    if (assignments[0][type].size() >
+                        assignments[1][type].size()) {
                         index = 1;
                     }
-                    assignment[index].emplace_back(professor.name);
+                    assignments[index][type].emplace_back(professor.name);
                 }
                 continue;
             }
 
-            if (student_count <= th) {
+            {
                 int index = 0;
                 if ((int)plan[0].size() + student_count > half) {
                     index = 1;
                 }
                 for (auto student : professor.students) {
-                    plan[index].emplace_back(
-                        student.name, can_assign ? student.supervisor : "null");
+                    plan[index].emplace_back(student.name, professor,
+                                             can_assign);
                 }
                 assignment_count[index][professor.name] +=
                     (int)professor.students.size();
                 if (can_assign) {
-                    assignment[index].emplace_back(professor.name);
+                    assignments[index][static_cast<unsigned>(professor.type)]
+                        .emplace_back(professor.name);
                 }
-            } else {
+            }
+            /*
+            指導学生が多い場合に分割する処理
+            {
                 int count = 0;
                 for (auto student : professor.students) {
                     int index = count >= student_count / 2;
@@ -94,35 +104,83 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                 assignment_count[1][professor.name] +=
                     (int)(professor.students.size() + 1) / 2;
             }
+            */
         }
     }
 
     for (int i = 0; i < window; i++) {
         int slot_count = (int)plan[i].size() * k;
+        int assign_count = assignments[i][0].size() + assignments[i][1].size() +
+                           assignments[i][2].size();
         int ave_assignment_count =
-            (slot_count + (int)assignment[i].size() - 1) /
-            (int)assignment[i].size();
+            (slot_count + assign_count - 1) / assign_count;
 
+        // 教授の割り当て
         for (auto &slot : plan[i]) {
-            if (slot.supervisor != "null") {
-                slot.assign_professor.emplace_back(slot.supervisor);
+            int min = std::numeric_limits<int>::max();
+            std::string name = "null";
+            for (auto professor : assignments[i][static_cast<unsigned>(
+                     ProfessorType::professor)]) {
+                if (slot.flag || slot.supervisor == professor) continue;
+                if (assignment_count[i][professor] < ave_assignment_count) {
+                    slot.assign_professor.emplace_back(professor);
+                    slot.flag = true;
+                    assignment_count[i][professor]++;
+                    break;
+                }
+                else {
+                    if(assignment_count[i][professor] < min) {
+                        min = assignment_count[i][professor];
+                        name = professor;
+                    }                    
+                }
+            }
+            if(!slot.flag) {
+                slot.flag = true;
+                slot.assign_professor.emplace_back(name);
+                assignment_count[i][name]++;
             }
         }
 
-        for (auto professor : assignment[i]) {
-            for (int j = 0; j < k; j++) {
-                for (auto &slot : plan[i]) {
-                    if ((int)slot.assign_professor.size() < j) continue;
-                    if (slot.can_assign(professor)) {
-                        slot.assign_professor.emplace_back(professor);
-                        assignment_count[i][professor]++;
-                        if (ave_assignment_count <
-                            assignment_count[i][professor])
-                            break;
+        // 助教授の割り当て
+        for (auto &slot : plan[i]) {
+            int min = std::numeric_limits<int>::max();
+            std::string name = "null";
+            bool is_assigned = false;
+            for (auto assistant : assignments[i][static_cast<unsigned>(
+                     ProfessorType::assistant)]) {
+                if (assignment_count[i][assistant] < ave_assignment_count) {
+                    slot.assign_professor.emplace_back(assistant);
+                    assignment_count[i][assistant]++;
+                    is_assigned = true;
+                    break;
+                }
+                else {
+                    if(assignment_count[i][assistant] < min) {
+                        min = assignment_count[i][assistant];
+                        name = assistant;
                     }
                 }
-                if (ave_assignment_count < assignment_count[i][professor])
-                    break;
+            }
+            if(!is_assigned) {
+                slot.assign_professor.emplace_back(name);
+                assignment_count[i][name]++;
+            }
+        }
+
+        for (int j = 0; j < type_count; j++) {
+            for (auto professor : assignments[i][j]) {
+                for(auto &slot: plan[i]) {
+                    if((int)slot.assign_professor.size() == k) continue;
+                    bool can_assign = assignment_count[i][professor] < ave_assignment_count;
+                    for(auto name: slot.assign_professor) {
+                        can_assign &= name != professor;
+                    }
+                    if(can_assign) {
+                        slot.assign_professor.emplace_back(professor);
+                        assignment_count[i][professor]++;
+                    }
+                }
             }
         }
 

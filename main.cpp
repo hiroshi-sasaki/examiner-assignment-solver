@@ -18,7 +18,7 @@
 
 int main() {
     auto professors = concept_presentation_input("professor.txt", "student.txt");
-    auto result = concept_presentation_assignment_solver(professors, 2);
+    auto result = concept_presentation_assignment_solver(professors, 4);
     for(auto slots: result) {
         std::cout << "---" << std::endl;
         for(auto slot: slots) {

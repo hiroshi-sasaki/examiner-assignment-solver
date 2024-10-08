@@ -16,9 +16,11 @@ std::vector<Professor> concept_presentation_input(
     std::vector<Professor> professors(n);
     for(int i = 0; i < n; i++) {
         std::string timestamp, mail, name, is_possible;
-        professor_file >> timestamp >> mail >> name >> is_possible;
+        int type;
+        professor_file >> timestamp >> mail >> name >> is_possible >> type;
         professors[i].name = name;
         professors[i].is_possible = is_possible;
+        professors[i].type = static_cast<ProfessorType>(type);
     }
 
     int m;
