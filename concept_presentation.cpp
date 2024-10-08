@@ -56,11 +56,11 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
             int student_count = (int)professor.students.size();
             bool can_assign = professor.is_possible[0] == 'o' &&
                               professor.is_possible[1] == 'o';
+            int type = static_cast<unsigned>(professor.type);
 
             if (student_count == 0) {
                 if (can_assign) {
                     int index = 0;
-                    int type = static_cast<unsigned>(professor.type);
                     if (assignments[0][type].size() >
                         assignments[1][type].size()) {
                         index = 1;
@@ -75,6 +75,9 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                 if ((int)plan[0].size() + student_count > half) {
                     index = 1;
                 }
+                if ((int)plan[1].size() + student_count <= half && assignments[0][type].size() > assignments[1][type].size()) {
+                    index = 1;
+                }
                 for (auto student : professor.students) {
                     plan[index].emplace_back(student.name, professor,
                                              can_assign);
@@ -82,7 +85,7 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                 assignment_count[index][professor.name] +=
                     (int)professor.students.size();
                 if (can_assign) {
-                    assignments[index][static_cast<unsigned>(professor.type)]
+                    assignments[index][type]
                         .emplace_back(professor.name);
                 }
             }
@@ -177,7 +180,7 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                         can_assign &= name != professor;
                     }
                     if(can_assign) {
-                        slot.assign_professor.emplace_back(professor);
+                        slot.assign_professor.insert(slot.assign_professor.end() - 1, professor);
                         assignment_count[i][professor]++;
                     }
                 }
