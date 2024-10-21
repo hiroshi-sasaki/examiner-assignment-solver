@@ -10,19 +10,12 @@
 #include <string>
 #include <vector>
 
-#include "concept_presentation.cpp"
-#include "io.cpp"
-#include "user.hpp"
-
-
+#include "research_project/research_project.cpp"
 
 int main() {
-    auto professors = concept_presentation_input("professor.txt", "student.txt");
-    auto result = concept_presentation_assignment_solver(professors, 4);
-    for(auto slots: result) {
-        std::cout << "---" << std::endl;
-        for(auto slot: slots) {
-            std::cout << slot.presenter << " " << slot.assign_professor << std::endl;
-        }
-    }
+    std::string filename;
+    int type;
+    std::cin >> filename >> type;
+    auto result = run(filename, type);
+    reserch_project_output("result.csv", result);
 }
