@@ -35,6 +35,8 @@ struct Slot {
 
     bool flag = false;
 
+    int assistant_count = 0;
+
     Slot(std::string name, Professor professor, bool can_assign) {
         presenter = name;
         supervisor = professor.name;

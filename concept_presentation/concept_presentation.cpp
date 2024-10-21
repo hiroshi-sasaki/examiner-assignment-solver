@@ -14,6 +14,7 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &vec) {
 std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
     std::vector<Professor> professors, int k) {
     const int window = 2;
+    const int ty_assistant = 2;
     const int type_count = 3;
     std::vector plan(window, std::vector<Slot>());
     std::vector assignments(
@@ -154,6 +155,7 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                      ProfessorType::assistant)]) {
                 if (assignment_count[i][assistant] < ave_assignment_count) {
                     slot.assign_professor.emplace_back(assistant);
+                    slot.assistant_count++;
                     assignment_count[i][assistant]++;
                     is_assigned = true;
                     break;
@@ -166,6 +168,7 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                 }
             }
             if(!is_assigned) {
+                slot.assistant_count++;
                 slot.assign_professor.emplace_back(name);
                 assignment_count[i][name]++;
             }
@@ -176,12 +179,14 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                 for(auto &slot: plan[i]) {
                     if((int)slot.assign_professor.size() == k) continue;
                     bool can_assign = assignment_count[i][professor] < ave_assignment_count;
+                    can_assign &= static_cast<unsigned>(ProfessorType::assistant) != j || slot.assistant_count < ty_assistant;
                     for(auto name: slot.assign_professor) {
                         can_assign &= name != professor;
                     }
                     if(can_assign) {
                         slot.assign_professor.insert(slot.assign_professor.end() - 1, professor);
                         assignment_count[i][professor]++;
+                        if(static_cast<unsigned>(ProfessorType::assistant) == j) slot.assistant_count++;
                     }
                 }
             }
