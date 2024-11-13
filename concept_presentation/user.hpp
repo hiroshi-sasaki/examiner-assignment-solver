@@ -5,8 +5,8 @@
 #include <vector>
 
 struct Student {
-    std::string name;
-    std::string supervisor;
+    std::string name = "";
+    std::string supervisor = "";
     std::vector<std::string> assign_professors;
 
     std::string is_possible;

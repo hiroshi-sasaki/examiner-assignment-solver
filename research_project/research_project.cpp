@@ -39,8 +39,6 @@ bool validator(std::vector<std::vector<Student>> result) {
 
 std::vector<std::vector<Student>> research_project(
     std::vector<Student> students, bool is_first) {
-    std::random_device seed_gen;
-    std::mt19937 engine(seed_gen());
     std::uniform_int_distribution<int> rng(0, 3);
     const int parallel = 8;
     std::vector<std::pair<std::string, std::vector<Student>>> remain;
@@ -88,7 +86,7 @@ std::vector<std::vector<Student>> research_project(
                 if (check(i, j, s.first)) {
                     result[i][j] = s.second.back();
                     s.second.pop_back();
-                    if (!s.second.empty() && j + 1 < slot && rng(engine) > 0) {
+                    if (!s.second.empty() && j + 1 < slot) {
                         result[i][j+1] = s.second.back();
                         s.second.pop_back();
                     }
