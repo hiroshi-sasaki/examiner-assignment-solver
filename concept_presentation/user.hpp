@@ -4,12 +4,13 @@
 #include <string>
 #include <vector>
 
+const int k = 4;
+
 struct Student {
     std::string name = "";
     std::string supervisor = "";
     std::vector<std::string> assign_professors;
-
-    std::string is_possible;
+    std::string is_possible = "oo";
 };
 
 enum class ProfessorType : unsigned {
@@ -22,9 +23,11 @@ struct Professor {
     char campus;
     std::string name;
     std::string is_possible;
+    std::string affiliation;
 
     ProfessorType type;
 
+    bool student_assign = false;
     std::vector<Student> students;
 };
 
@@ -46,16 +49,16 @@ struct Slot {
         }
     }
 
-    bool can_assign(std::string name) {
-        if (supervisor == name) return false;
+    bool can_assign(std::string name, std::string affiliation) {
+        if (supervisor == name || affiliation == supervisor || (int)assign_professor.size() >= k) return false;
         for (auto s : assign_professor) {
             if (s == name) return false;
         }
         return true;
     }
 
-    void assign(std::string name) {
-        assert(can_assign(name));
+    void assign(std::string name, std::string affiliation) {
+        assert(can_assign(name, affiliation));
         assign_professor.emplace_back(name);
     }
 };

@@ -15,7 +15,7 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &vec) {
 }
 
 /*
-タイムスタンプ, 氏名, 主指導教員
+タイムスタンプ, 学生記番号, 主指導教員,可能か,備考
 */
 std::vector<Student> student_input(std::string student_filename) {
     std::ifstream file(student_filename, std::ios::in);
@@ -31,18 +31,15 @@ std::vector<Student> student_input(std::string student_filename) {
         students.emplace_back();
         auto &student = students.back();
         student.name = line[1];
-        if('A' <= line[2].back() && line[2].back() <= 'Z') {
-            while('A' <= line[2].back() && line[2].back() <= 'Z') {
-                line[2].pop_back();
-            }
-        }
+        if(line[4] == "1") student.is_possible[1] = 'x';
+        else if(line[4] == "2") student.is_possible[0] = 'x';
         student.supervisor = line[2];
     }
     return students;
 }
 
 /*
-タイムスタンプ, メールアドレス, 名前, 前半, 後半
+名前,役職,所属研究室,前半,後半,自由記述覧
 */
 std::vector<Professor> professor_input(std::string professor_filename) {
     std::ifstream file(professor_filename, std::ios::in);
@@ -57,16 +54,32 @@ std::vector<Professor> professor_input(std::string professor_filename) {
         }
         professors.emplace_back();
         auto &prof = professors.back();
-        prof.name = line[2];
+        prof.name = line[0];
         if(line[3].ends_with("OK")) prof.is_possible += 'o';
         else prof.is_possible += 'x';
         if(line[4].ends_with("OK")) prof.is_possible += 'o';
         else prof.is_possible += 'x';
+
+        prof.affiliation = line[2];
+
+        if(line[1] == "教授") {
+            prof.type = ProfessorType::professor;
+        }
+        else if(line[1] == "准教授") {
+            prof.type = ProfessorType::associate;
+        }
+        else if(line[1] == "助教") {
+            prof.type = ProfessorType::assistant;
+        }
+        else {
+            std::cerr << line[1] << std::endl;
+            assert(0);
+        }
     }
     return professors;
 }
 
-std::vector<Professor> concept_presentation_input(
+std::vector<Professor>concept_presentation_input(
     std::string professor_filename, std::string student_filename) {
     auto professors = professor_input(professor_filename);
     auto students = student_input(student_filename);
@@ -74,26 +87,20 @@ std::vector<Professor> concept_presentation_input(
     for(auto student: students) {
         for(auto &professor: professors) {
             if(professor.name == student.supervisor) {
-                professor.students.emplace_back(student.name, student.supervisor);
+                professor.students.emplace_back(student);
             }
         }
     }
-
-    for(auto &prof: professors) {
-        if(prof.students.empty()) {
-            prof.type = ProfessorType::assistant;
-        }
-        else {
-            prof.type = ProfessorType::professor;
-        }
-    }
-
     return professors;
 }
 
 void concept_presentation_output(std::vector<std::vector<Slot>> result) {
     for(auto window: result) {
-        std::cout << "学生, 教員1, 教員2, 教員3, 教員4, 教員5" << std::endl;
+        std::cout << "学生";
+        for(int i = 1; i < k+1; i++) {
+            std::cout << " " << "教員" << i;
+        }
+        std::cout << std::endl;
         for(auto s: window) {
             std::cout << s.presenter;
             for(auto a: s.assign_professor) {
