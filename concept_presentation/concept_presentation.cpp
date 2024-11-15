@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <limits>
 #include <map>
+#include <random>
 
 #include "io.cpp"
 #include "user.hpp"
@@ -11,11 +12,11 @@ const int window = 2;
 const int ty_assistant = 2;
 const int type_count = 3;
 const int max_assign = 6;
-const int parameter_1 = 3;
+const int parameter_1 = 1;
 
 bool validator(Slot s, std::map<std::string, int> &map) {
     if (ty_assistant < s.assistant_count || !s.flag) return false;
-    assert((int)s.assign_professor.size() == k);
+    if((int)s.assign_professor.size() != k) return false;
     int c = 0;
     for (int i = 0; i < k; i++) {
         c += map[s.assign_professor[i]] == 2;
@@ -73,13 +74,15 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                     assert(student.is_possible[0] == 'o');
                     plan[0].emplace_back(student.name, professor,
                                          professor.is_possible[0] == 'o');
-                    assignment_count[0][professor.name]++;
+                    if (professor.is_possible[0] == 'o')
+                        assignment_count[0][professor.name]++;
                     first++;
                 } else {
                     assert(student.is_possible[1] == 'o');
                     plan[1].emplace_back(student.name, professor,
                                          professor.is_possible[1] == 'o');
-                    assignment_count[1][professor.name]++;
+                    if (professor.is_possible[1] == 'o')
+                        assignment_count[1][professor.name]++;
                 }
             }
             continue;
@@ -100,31 +103,36 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                     assert(student.is_possible[0] == 'o');
                     plan[0].emplace_back(student.name, professor,
                                          professor.is_possible[0] == 'o');
-                    assignment_count[0][professor.name]++;
+                    if (professor.is_possible[0] == 'o')
+                        assignment_count[0][professor.name]++;
                 } else if (student.is_possible[0] == 'x') {
                     index = 1;
                     assert(student.is_possible[1] == 'o');
                     plan[1].emplace_back(student.name, professor,
                                          professor.is_possible[1] == 'o');
-                    assignment_count[1][professor.name]++;
+                    if (professor.is_possible[1] == 'o')
+                        assignment_count[1][professor.name]++;
                 } else {
                     if (professor.is_possible[0] != professor.is_possible[1]) {
                         if (professor.is_possible[0] == 'o') {
                             plan[0].emplace_back(
                                 student.name, professor,
                                 professor.is_possible[0] == 'o');
-                            assignment_count[0][professor.name]++;
+                            if (professor.is_possible[0] == 'o')
+                                assignment_count[0][professor.name]++;
                         } else {
                             plan[1].emplace_back(
                                 student.name, professor,
                                 professor.is_possible[1] == 'o');
-                            assignment_count[1][professor.name]++;
+                            if (professor.is_possible[1] == 'o')
+                                assignment_count[1][professor.name]++;
                         }
                     } else {
                         plan[index].emplace_back(
                             student.name, professor,
                             professor.is_possible[index] == 'o');
-                        assignment_count[index][professor.name]++;
+                        if (professor.is_possible[index] == 'o')
+                            assignment_count[index][professor.name]++;
                     }
                 }
             }
@@ -189,7 +197,7 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
             for (auto [professor, affiliation] :
                  assignments[2]
                             [static_cast<unsigned>(ProfessorType::professor)]) {
-                if (slot.flag || slot.supervisor == professor) continue;
+                if (slot.supervisor == professor) continue;
                 if (assignment_count[i][professor] < max_assign &&
                     assign_count(professor) / parameter_1 < min) {
                     min = assign_count(professor) / parameter_1;
@@ -228,7 +236,25 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                 }
             }
         }
-        for (auto &slot : plan[i]) {
+    }
+
+    // どっちもokを割り当て
+    std::vector<std::pair<int, int>> indexs;
+    for (int i = 0; i < window; i++) {
+        for (int j = 0; j < (int)plan[i].size(); j++) {
+            if (plan[i][j].assign_professor.size() < k)
+                indexs.emplace_back(i, j);
+        }
+    }
+    {
+        std::random_device seed_gen;
+        std::mt19937 engine(seed_gen());
+        std::shuffle(indexs.begin(), indexs.end(), engine);
+    }
+
+    for (auto [i, j] : indexs) {
+        auto &slot = plan[i][j];
+        {
             while (slot.assign_professor.size() < k) {
                 std::string s = "";
                 int min = std::numeric_limits<int>::max();
@@ -263,19 +289,21 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                 assignment_count[i][s]++;
                 if (is_assistant) slot.assistant_count++;
             }
-            std::sort(std::begin(slot.assign_professor) + 1, std::end(slot.assign_professor), [&](auto lhs, auto rhs) {
-                return map[lhs] < map[rhs]; 
-            });
         }
-        for (auto [s, c] : assignment_count[i]) {
-            assert(c <= max_assign);
-        }
-        for (auto slot : plan[i]) {
+    }
+    for(int i = 0; i < window; i++) {
+        for (auto &slot : plan[i]) {
+            std::sort(std::begin(slot.assign_professor) + 1,
+                      std::end(slot.assign_professor),
+                      [&](auto lhs, auto rhs) { return map[lhs] < map[rhs]; });
             assert(validator(slot, map));
         }
     }
-    // for(auto professor: professors) std::cerr << assign_count(professor.name)
-    // << std::endl;
+
+    std::cout << "教員, 審査学生数" << std::endl;
+    for (auto professor : professors)
+        std::cout << professor.name << ", " << assign_count(professor.name)
+                  << std::endl;
     return plan;
 }
 
