@@ -300,10 +300,9 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
         }
     }
 
-    std::cout << "教員, 審査学生数" << std::endl;
+    std::cout << "教員, 前半, 後半, 合計" << std::endl;
     for (auto professor : professors)
-        std::cout << professor.name << ", " << assign_count(professor.name)
-                  << std::endl;
+        std::cout << professor.name << ", " << assignment_count[0][professor.name] << ", " << assignment_count[1][professor.name] << ", " << assign_count(professor.name) << std::endl;
     return plan;
 }
 
