@@ -75,14 +75,14 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                     assert(student.is_possible[0] == 'o');
                     plan[0].emplace_back(student.name, professor,
                                          professor.is_possible[0] == 'o');
-                    if (professor.is_possible[0] == 'o')
+                    if (!plan[0].back().assign_professor.empty())
                         assignment_count[0][professor.name]++;
                     first++;
                 } else {
                     assert(student.is_possible[1] == 'o');
                     plan[1].emplace_back(student.name, professor,
                                          professor.is_possible[1] == 'o');
-                    if (professor.is_possible[1] == 'o')
+                    if (!plan[1].back().assign_professor.empty())
                         assignment_count[1][professor.name]++;
                 }
             }
@@ -104,14 +104,14 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                     assert(student.is_possible[0] == 'o');
                     plan[0].emplace_back(student.name, professor,
                                          professor.is_possible[0] == 'o');
-                    if (professor.is_possible[0] == 'o')
+                    if (!plan[0].back().assign_professor.empty())
                         assignment_count[0][professor.name]++;
                 } else if (student.is_possible[0] == 'x') {
                     index = 1;
                     assert(student.is_possible[1] == 'o');
                     plan[1].emplace_back(student.name, professor,
                                          professor.is_possible[1] == 'o');
-                    if (professor.is_possible[1] == 'o')
+                    if (!plan[1].back().assign_professor.empty())
                         assignment_count[1][professor.name]++;
                 } else {
                     if (professor.is_possible[0] != professor.is_possible[1]) {
@@ -119,20 +119,20 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
                             plan[0].emplace_back(
                                 student.name, professor,
                                 professor.is_possible[0] == 'o');
-                            if (professor.is_possible[0] == 'o')
+                            if (!plan[0].back().assign_professor.empty())
                                 assignment_count[0][professor.name]++;
                         } else {
                             plan[1].emplace_back(
                                 student.name, professor,
                                 professor.is_possible[1] == 'o');
-                            if (professor.is_possible[1] == 'o')
+                            if (!plan[1].back().assign_professor.empty())
                                 assignment_count[1][professor.name]++;
                         }
                     } else {
                         plan[index].emplace_back(
                             student.name, professor,
                             professor.is_possible[index] == 'o');
-                        if (professor.is_possible[index] == 'o')
+                        if (!plan[index].back().assign_professor.empty())
                             assignment_count[index][professor.name]++;
                     }
                 }
