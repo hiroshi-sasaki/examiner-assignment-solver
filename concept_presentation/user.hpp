@@ -40,17 +40,17 @@ struct Slot {
 
     int assistant_count = 0;
 
-    Slot(std::string name, Professor professor, bool can_assign) {
+    Slot(std::string name, Professor professor, bool can_assign_prof) {
         presenter = name;
         supervisor = professor.name;
-        if(can_assign) {
+        if(can_assign(professor.name, professor.affiliation) && can_assign_prof) {
             assign_professor.emplace_back(supervisor);
             flag = professor.type == ProfessorType::professor;
         }
     }
 
     bool can_assign(std::string name, std::string affiliation) {
-        if (supervisor == name || affiliation == supervisor || (int)assign_professor.size() >= k) return false;
+        if ((k == 3 && supervisor == name) || affiliation == supervisor || (int)assign_professor.size() >= k) return false;
         for (auto s : assign_professor) {
             if (s == name) return false;
         }

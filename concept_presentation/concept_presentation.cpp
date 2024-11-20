@@ -20,6 +20,7 @@ bool validator(Slot s, std::map<std::string, int> &map) {
     int c = 0;
     for (int i = 0; i < k; i++) {
         c += map[s.assign_professor[i]] == 2;
+        if(k == 3 && s.assign_professor[i] == s.supervisor) return false;
         for (int j = i + 1; j < k; j++) {
             if (s.assign_professor[i] == s.assign_professor[j]) return false;
         }
