@@ -15,6 +15,7 @@
 int main() {
     std::string filename;
     int type;
+    std::cerr << "Input csv file name" << std::endl;
     std::cin >> filename >> type;
     std::cerr << "Input csv file is " << filename << std::endl;
     auto result = run(filename, type);
