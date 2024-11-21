@@ -28,6 +28,7 @@ std::vector<Student> research_project_input(std::string student_filename) {
         }
         students.emplace_back(line);
     }
+    std::cerr << "[Input is completed]" << std::endl;
     return students;
 }
 

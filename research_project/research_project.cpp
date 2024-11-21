@@ -39,6 +39,8 @@ bool validator(std::vector<std::vector<Student>> result) {
 
 std::vector<std::vector<Student>> research_project(
     std::vector<Student> students, bool is_first) {
+    std::cerr << "[Start scheduling]" << std::endl;
+
     std::uniform_int_distribution<int> rng(0, 3);
     const int parallel = 8;
     std::vector<std::pair<std::string, std::vector<Student>>> remain;
@@ -96,6 +98,7 @@ std::vector<std::vector<Student>> research_project(
         }
     }
     assert(validator(result));
+    std::cerr << "[Finish scheduling]" << std::endl;
     return result;
 }
 
