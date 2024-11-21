@@ -11,11 +11,12 @@
 #include <vector>
 
 #include "research_project/research_project.cpp"
+#include "concept_presentation/concept_presentation.cpp"
 
-int main() {
-    std::string filename;
-    int type;
-    std::cin >> filename >> type;
-    auto result = run(filename, type);
-    reserch_project_output("result.csv", result);
+int main(int argc, char *argv[]) {
+    assert(argc == 3);
+    std::string filename = argv[1];
+    int type = std::stoi(argv[2]);
+    auto result = research_project::run(filename, type);
+    research_project::reserch_project_output(result);
 }

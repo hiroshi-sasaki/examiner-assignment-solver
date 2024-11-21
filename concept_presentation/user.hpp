@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+namespace concept_presentation {
+
 const int k = 4;
 
 struct Student {
@@ -62,3 +64,5 @@ struct Slot {
         assign_professor.emplace_back(name);
     }
 };
+
+}

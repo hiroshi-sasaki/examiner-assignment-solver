@@ -8,6 +8,8 @@
 #include "io.cpp"
 #include "user.hpp"
 
+namespace concept_presentation {
+
 const int window = 2;
 const int ty_assistant = 2;
 const int type_count = 3;
@@ -312,4 +314,6 @@ void run(std::string professor_filename, std::string student_filename) {
         concept_presentation_input(professor_filename, student_filename);
     auto plan = concept_presentation_assignment_solver(professors);
     concept_presentation_output(plan);
+}
+
 }

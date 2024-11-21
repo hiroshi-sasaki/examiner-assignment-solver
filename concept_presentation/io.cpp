@@ -7,6 +7,8 @@
 
 #include "user.hpp"
 
+namespace concept_presentation {
+
 template <typename T>
 std::ostream &operator<<(std::ostream &os, const std::vector<T> &vec) {
     for (std::size_t i = 0; i < vec.size(); i++)
@@ -110,4 +112,6 @@ void concept_presentation_output(std::vector<std::vector<Slot>> result) {
             std::cout << std::endl;
         }
     }
+}
+
 }

@@ -7,6 +7,8 @@
 
 #include "user.hpp" 
 
+namespace research_project {
+
 std::ostream &operator<<(std::ostream &os, const Student &student) {
     os << student.number << ", " << student.name << ", " << student.furigana << ", " << (student.is_first ? student.first_supervisor : student.second_supervisor);
     return os;
@@ -29,18 +31,22 @@ std::vector<Student> research_project_input(std::string student_filename) {
         students.emplace_back(line);
     }
     std::cerr << "[Input is completed]" << std::endl;
+    for(int i = 0; i + 1 < students.size(); i++) {
+        students[i].second_supervisor.pop_back();
+    }
     return students;
 }
 
-void reserch_project_output(std::string filename, std::vector<std::vector<Student>> result) {
-    std::ofstream file(filename);
-    file << "枠番号, 学籍番号, 名前, フリガナ, 教員" << std::endl;
+void reserch_project_output(std::vector<std::vector<Student>> result) {
+    std::cout << "枠番号, 学籍番号, 名前, フリガナ, 教員" << std::endl;
     for(auto slot: result) {
         for(int i = 1; auto student: slot) {
-            file << i << ", " << student << std::endl;
+            std::cout << i << ", " << student << std::endl;
             i++;
         }
-        file << std::endl;
+        std::cout << std::endl;
     }
     return;
+}
+
 }

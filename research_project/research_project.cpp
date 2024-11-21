@@ -11,6 +11,8 @@
 #include "io.cpp"
 #include "user.hpp"
 
+namespace research_project {
+
 bool validator(std::vector<std::vector<Student>> result) {
     int n = (int)result.size();
     int m = result.back().size();
@@ -41,7 +43,6 @@ std::vector<std::vector<Student>> research_project(
     std::vector<Student> students, bool is_first) {
     std::cerr << "[Start scheduling]" << std::endl;
 
-    std::uniform_int_distribution<int> rng(0, 3);
     const int parallel = 8;
     std::vector<std::pair<std::string, std::vector<Student>>> remain;
     int sum = 0;
@@ -106,4 +107,6 @@ std::vector<std::vector<Student>> run(std::string filename, int type) {
     assert(type == 1 || type == 2);
     auto students = research_project_input(filename);
     return research_project(students, type == 1);
+}
+
 }

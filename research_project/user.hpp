@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+namespace research_project {
+
 struct Student {
     std::string number = "N/A";
     std::string name, furigana = "N/A";
@@ -23,3 +25,5 @@ struct Student {
         second_supervisor = line[4];
     }
 };
+
+}
