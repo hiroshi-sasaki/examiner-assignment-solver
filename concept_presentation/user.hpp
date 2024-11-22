@@ -6,7 +6,7 @@
 
 namespace concept_presentation {
 
-const int k = 4;
+int k = 4;
 
 struct Student {
     std::string name = "";

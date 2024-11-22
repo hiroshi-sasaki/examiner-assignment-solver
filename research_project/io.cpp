@@ -37,7 +37,7 @@ std::vector<Student> research_project_input(std::string student_filename) {
     return students;
 }
 
-void reserch_project_output(std::vector<std::vector<Student>> result) {
+void research_project_output(std::vector<std::vector<Student>> result) {
     std::cout << "枠番号, 学籍番号, 名前, フリガナ, 教員" << std::endl;
     for(auto slot: result) {
         for(int i = 1; auto student: slot) {

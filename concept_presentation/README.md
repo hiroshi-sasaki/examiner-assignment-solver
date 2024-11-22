@@ -2,11 +2,11 @@
 
 ## 入力
 
-標準入力で教員情報のcsvのファイル名、学生情報のcsvのファイル名を与える。
+コマンド引数で構想発表であること、教員情報のcsvのファイル名、学生情報のcsvのファイル名、審査数を与える。
 
 例
 ```
-kyouinn.csv gakusei.csv
+concept_presentation kyouinn.csv gakusei.csv 4
 ```
 
 ## 出力
