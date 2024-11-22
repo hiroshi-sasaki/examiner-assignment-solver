@@ -30,6 +30,9 @@ std::vector<Student> student_input(std::string student_filename) {
         while(std::getline(i_stream, str_conma_buf, ',')) {
             line.emplace_back(str_conma_buf);
         }
+        if(line[3].ends_with("NG")) {
+            continue;
+        }
         students.emplace_back();
         auto &student = students.back();
         student.name = line[1];
