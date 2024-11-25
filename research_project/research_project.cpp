@@ -103,10 +103,11 @@ std::vector<std::vector<Student>> research_project(
     return result;
 }
 
-std::vector<std::vector<Student>> run(std::string filename, int type) {
+void run(std::string filename, int type) {
     assert(type == 1 || type == 2);
     auto students = research_project_input(filename);
-    return research_project(students, type == 1);
+    auto result = research_project(students, type == 1);
+    research_project_output(result);
 }
 
 }

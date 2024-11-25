@@ -8,7 +8,7 @@ namespace research_project {
 
 struct Student {
     std::string number = "N/A";
-    std::string name, furigana = "N/A";
+    std::string name;
     std::string first_supervisor = "N/A";
     std::string second_supervisor = "N/A";
 
@@ -16,14 +16,12 @@ struct Student {
 
     Student() = default;
 
-    Student(std::vector<std::string> line) {
-        assert(line.size() == 5);
-        number = line[0];
-        name = line[1];
-        furigana = line[2];
-        first_supervisor = line[3];
-        second_supervisor = line[4];
-    }
+    Student(std::string number_, std::string name_, std::string first,
+            std::string second)
+        : number(number_),
+          name(name_),
+          first_supervisor(first),
+          second_supervisor(second) {}
 };
 
-}
+}  // namespace research_project

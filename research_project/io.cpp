@@ -1,16 +1,19 @@
 #pragma once
 
+#include <fstream>
 #include <iostream>
 #include <sstream>
-#include <fstream>
 #include <vector>
 
-#include "user.hpp" 
+#include "../util/io_util.hpp"
+#include "user.hpp"
 
 namespace research_project {
 
 std::ostream &operator<<(std::ostream &os, const Student &student) {
-    os << student.number << ", " << student.name << ", " << student.furigana << ", " << (student.is_first ? student.first_supervisor : student.second_supervisor);
+    os << student.number << ", " << student.name << ", "
+       << (student.is_first ? student.first_supervisor
+                            : student.second_supervisor);
     return os;
 }
 
@@ -22,25 +25,31 @@ std::vector<Student> research_project_input(std::string student_filename) {
     std::string str_buf, str_conma_buf;
     std::vector<Student> students;
     std::getline(file, str_buf);
-    while(std::getline(file, str_buf)) {
-        std::istringstream i_stream(str_buf);
-        std::vector<std::string> line;
-        while(std::getline(i_stream, str_conma_buf, ',')) {
-            line.emplace_back(str_conma_buf);
-        }
-        students.emplace_back(line);
+    int student_number_index, student_name_index, first_index, second_index;
+    {
+        auto line = get_line_split_by_c(str_buf, ',');
+        student_number_index = get_column_index(line, "学籍番号");
+        student_name_index = get_column_index(line, "学生所属名");
+        first_index = get_column_index(line, "前半教員");
+        second_index = get_column_index(line, "後半教員");
+    }
+    while (std::getline(file, str_buf)) {
+        auto line = get_line_split_by_c(str_buf, ',');
+
+        std::string number = line[student_number_index];
+        std::string name = line[student_name_index];
+        std::string first = line[first_index];
+        std::string second = line[second_index];
+        students.emplace_back(number, name, first, second);
     }
     std::cerr << "[Input is completed]" << std::endl;
-    for(int i = 0; i + 1 < students.size(); i++) {
-        students[i].second_supervisor.pop_back();
-    }
     return students;
 }
 
 void research_project_output(std::vector<std::vector<Student>> result) {
     std::cout << "枠番号, 学籍番号, 名前, フリガナ, 教員" << std::endl;
-    for(auto slot: result) {
-        for(int i = 1; auto student: slot) {
+    for (auto slot : result) {
+        for (int i = 1; auto student : slot) {
             std::cout << i << ", " << student << std::endl;
             i++;
         }
@@ -49,4 +58,4 @@ void research_project_output(std::vector<std::vector<Student>> result) {
     return;
 }
 
-}
+}  // namespace research_project

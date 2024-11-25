@@ -1,14 +1,5 @@
-#include <cassert>
-#include <fstream>
-#include <iostream>
-#include <limits>
-#include <map>
-#include <numeric>
-#include <optional>
-#include <queue>
-#include <random>
 #include <string>
-#include <vector>
+#include <cassert>
 
 #include "concept_presentation/concept_presentation.cpp"
 #include "research_project/research_project.cpp"
@@ -25,8 +16,7 @@ int main(int argc, char *argv[]) {
         assert(argc == 4);
         std::string filename = argv[2];
         int type = std::stoi(argv[3]);
-        auto result = research_project::run(filename, type);
-        research_project::research_project_output(result);
+        research_project::run(filename, type);
     }
     else {
         assert(0);
