@@ -17,7 +17,7 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &vec) {
 }
 
 /*
-タイムスタンプ, 学生記番号, 主指導教員,可能か,備考
+タイムスタンプ, 学生記番号, 氏名, 主指導教員, 可能か, 備考
 */
 std::vector<Student> student_input(std::string student_filename) {
     std::ifstream file(student_filename, std::ios::in);
@@ -30,15 +30,16 @@ std::vector<Student> student_input(std::string student_filename) {
         while(std::getline(i_stream, str_conma_buf, ',')) {
             line.emplace_back(str_conma_buf);
         }
-        if(line[3].ends_with("NG")) {
+        if(line[4].ends_with("NG")) {
             continue;
         }
         students.emplace_back();
         auto &student = students.back();
-        student.name = line[1];
-        if(line[4] == "1") student.is_possible[1] = 'x';
-        else if(line[4] == "2") student.is_possible[0] = 'x';
-        student.supervisor = line[2];
+        student.number = line[1];
+        student.name = line[2];
+        if(line[5] == "1") student.is_possible[1] = 'x';
+        else if(line[5] == "2") student.is_possible[0] = 'x';
+        student.supervisor = line[3];
     }
     return students;
 }
@@ -107,7 +108,7 @@ void concept_presentation_output(std::vector<std::vector<Slot>> result) {
         }
         std::cout << std::endl;
         for(auto s: window) {
-            std::cout << s.presenter;
+            std::cout << s.presenter.number << ", " << s.presenter.name;
             for(auto a: s.assign_professor) {
                 std::cout << ", ";
                 std::cout << a;

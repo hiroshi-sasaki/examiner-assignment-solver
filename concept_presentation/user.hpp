@@ -9,6 +9,7 @@ namespace concept_presentation {
 int k = 4;
 
 struct Student {
+    std::string number = "";
     std::string name = "";
     std::string supervisor = "";
     std::vector<std::string> assign_professors;
@@ -34,7 +35,7 @@ struct Professor {
 };
 
 struct Slot {
-    std::string presenter = "rest";
+    Student presenter;
     std::string supervisor = "rest";
     std::vector<std::string> assign_professor;
 
@@ -42,8 +43,8 @@ struct Slot {
 
     int assistant_count = 0;
 
-    Slot(std::string name, Professor professor, bool can_assign_prof) {
-        presenter = name;
+    Slot(Student s, Professor professor, bool can_assign_prof) {
+        presenter = s;
         supervisor = professor.name;
         if(can_assign(professor.name, professor.affiliation) && can_assign_prof) {
             assign_professor.emplace_back(supervisor);
