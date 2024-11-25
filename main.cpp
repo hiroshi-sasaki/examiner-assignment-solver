@@ -1,8 +1,9 @@
-#include <string>
 #include <cassert>
+#include <string>
 
 #include "concept_presentation/concept_presentation.cpp"
 #include "research_project/research_project.cpp"
+#include "util/io_util.cpp"
 
 int main(int argc, char *argv[]) {
     std::string event = argv[1];
@@ -17,8 +18,7 @@ int main(int argc, char *argv[]) {
         std::string filename = argv[2];
         int type = std::stoi(argv[3]);
         research_project::run(filename, type);
-    }
-    else {
+    } else {
         assert(0);
     }
 }

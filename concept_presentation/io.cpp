@@ -44,8 +44,7 @@ std::vector<Student> student_input(std::string student_filename) {
         if (line[t_or_f_index].ends_with("NG")) {
             continue;
         }
-        students.emplace_back();
-        auto &student = students.back();
+        Student student;
         student.number = line[student_number_index];
         student.name = line[student_name_index];
         if (line[other_index] == "1")
@@ -53,6 +52,7 @@ std::vector<Student> student_input(std::string student_filename) {
         else if (line[other_index] == "2")
             student.is_possible[0] = 'x';
         student.supervisor = line[supervisor_name_index];
+        insert_or_assign(students, student);
     }
     return students;
 }
@@ -85,8 +85,7 @@ std::vector<Professor> professor_input(std::string professor_filename) {
         while (std::getline(i_stream, str_conma_buf, ',')) {
             line.emplace_back(str_conma_buf);
         }
-        professors.emplace_back();
-        auto &prof = professors.back();
+        Professor prof;
         prof.name = line[name_index];
         if (line[first_slot_index].ends_with("OK"))
             prof.is_possible += 'o';
@@ -109,6 +108,7 @@ std::vector<Professor> professor_input(std::string professor_filename) {
             std::cerr << line[work_position_index] << std::endl;
             assert(0);
         }
+        insert_or_assign(professors, prof);
     }
     return professors;
 }

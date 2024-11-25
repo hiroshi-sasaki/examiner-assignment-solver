@@ -22,6 +22,10 @@ struct Student {
           name(name_),
           first_supervisor(first),
           second_supervisor(second) {}
+
+    bool operator==(const Student &rhs) const {
+      return name == rhs.name && number == rhs.number;
+    }
 };
 
 }  // namespace research_project

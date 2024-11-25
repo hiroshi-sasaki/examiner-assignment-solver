@@ -1,6 +1,3 @@
-#ifndef IO_UTIL
-#define IO_UTIL
-
 #include "io_util.hpp"
 
 #include <algorithm>
@@ -34,4 +31,13 @@ std::vector<std::string> get_line_split_by_c(std::string row, char c) {
     return line;
 }
 
-#endif
+template<class T>
+void insert_or_assign(std::vector<T> &a, T x) {
+    for(auto &val: a) {
+        if(val == x) {
+            val = x;
+            return;
+        }
+    }
+    a.emplace_back(x);
+}

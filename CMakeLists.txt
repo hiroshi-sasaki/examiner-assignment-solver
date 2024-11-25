@@ -6,4 +6,4 @@ project(ResearchProject)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(solver main.cpp util/io_util.cpp)
+add_executable(solver main.cpp)

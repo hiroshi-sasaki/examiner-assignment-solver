@@ -40,7 +40,9 @@ std::vector<Student> research_project_input(std::string student_filename) {
         std::string name = line[student_name_index];
         std::string first = line[first_index];
         std::string second = line[second_index];
-        students.emplace_back(number, name, first, second);
+
+        Student student(number, name, first, second);
+        insert_or_assign(students, student);
     }
     std::cerr << "[Input is completed]" << std::endl;
     return students;

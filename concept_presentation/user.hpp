@@ -14,6 +14,10 @@ struct Student {
     std::string supervisor = "";
     std::vector<std::string> assign_professors;
     std::string is_possible = "oo";
+
+    bool operator==(const Student &rhs) const {
+        return name == rhs.name;
+    }
 };
 
 enum class ProfessorType : unsigned {
@@ -32,6 +36,10 @@ struct Professor {
 
     bool student_assign = false;
     std::vector<Student> students;
+
+    bool operator==(const Professor &rhs) const {
+        return name == rhs.name;
+    }
 };
 
 struct Slot {
