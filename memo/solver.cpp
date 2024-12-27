@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -12,9 +13,11 @@
 
 #include "user.hpp"
 
+namespace examiner_assignment {
+
 struct examiner_assignment_solver {
     struct Block {
-        char campus;
+        std::string campus;
         std::string supervisor;
         std::vector<Student> students;
 
@@ -52,7 +55,7 @@ struct examiner_assignment_solver {
         }
 
         int min_left(int i) const {
-            if((int)is_assign.size() <= i) return -1;
+            if ((int)is_assign.size() <= i) return -1;
             for (int j = i; j < (int)is_assign.size(); j++) {
                 if (is_assign[j] == 'o') return j;
             }
@@ -114,7 +117,7 @@ struct examiner_assignment_solver {
                 if (now + start != left) {
                     cont = 0;
                 }
-                if(end < left + (int)blocks[i].students.size()) {
+                if (end < left + (int)blocks[i].students.size()) {
                     is_ok = false;
                     break;
                 }
@@ -122,9 +125,9 @@ struct examiner_assignment_solver {
                 for (int j = 0; j < (int)blocks[i].students.size(); j++) {
                     int id = blocks[i].orders[left][j];
                     auto student = blocks[i].students[id];
-                    slots[now] = {student.name, student.supervisor,
-                                              student.assign_professors};
-                                              now++;
+                    slots[now] = Slot{student.name, student.supervisor,
+                                      student.assign_professors};
+                    now++;
                     cont++;
                 }
             } else {
@@ -156,7 +159,8 @@ struct examiner_assignment_solver {
                                       std::vector<Block> blocks) const {
         const int sz = (int)blocks.size();
         std::vector dp(1 << sz, std::vector<int>(section, INF));
-        std::vector memo(1 << sz, std::vector<std::pair<int,int>>(section, {-1, -1}));
+        std::vector memo(1 << sz,
+                         std::vector<std::pair<int, int>>(section, {-1, -1}));
         dp[0][0] = start;
         for (int bit = 0; bit < (1 << sz); bit++) {
             for (int i = 0; i < section; i++) {
@@ -167,38 +171,38 @@ struct examiner_assignment_solver {
                     int nxt = blocks[j].min_left(time);
                     if (nxt == -1) continue;
                     int cont = i;
-                    if(time != nxt) {
+                    if (time != nxt) {
                         cont = 0;
                     }
                     cont += (int)blocks[j].students.size();
                     nxt += (int)blocks[j].students.size();
-                    if(cont >= section) {
+                    if (cont >= section) {
                         cont = 0;
                         nxt++;
                     }
-                    if(nxt < dp[bit | (1<<j)][cont]) {
-                        dp[bit | (1<<j)][cont] = nxt;
-                        memo[bit | (1<<j)][cont] = {j, i};
+                    if (nxt < dp[bit | (1 << j)][cont]) {
+                        dp[bit | (1 << j)][cont] = nxt;
+                        memo[bit | (1 << j)][cont] = {j, i};
                     }
                 }
             }
         }
-        int bit = (1<<sz) - 1, idx = -1, now = INF;
-        for(int i = 0; i < section; i++) {
-            if(dp[bit][i] < now) {
+        int bit = (1 << sz) - 1, idx = -1, now = INF;
+        for (int i = 0; i < section; i++) {
+            if (dp[bit][i] < now) {
                 now = dp[bit][i];
                 idx = i;
             }
         }
-        if(now == INF) {
+        if (now == INF) {
             std::cout << "not found" << std::endl;
             assert(0);
         }
         std::vector<int> order;
-        while(bit > 0) {
+        while (bit > 0) {
             auto [i, j] = memo[bit][idx];
             order.emplace_back(i);
-            bit ^= 1<<i;
+            bit ^= 1 << i;
             idx = j;
         }
         std::reverse(order.begin(), order.end());
@@ -211,27 +215,27 @@ struct examiner_assignment_solver {
         for (auto professor : professors) {
             if (professor.students.empty()) continue;
             sum += (int)professor.students.size();
-            if (professor.campus == 'o') {
+            if (professor.campus == "o") {
                 oookayama.emplace_back(professor);
-            } else if (professor.campus == 's') {
+            } else if (professor.campus == "s") {
                 suzukake.emplace_back(professor);
             } else {
                 assert(0);
             }
         }
         std::vector<Slot> result;
-        if(partition_count == 2) {
-            auto day1 = bit_dp_solution(0, l/2, oookayama);
-            auto day2 = bit_dp_solution(l/2, l, suzukake);
+        if (partition_count == 2) {
+            auto day1 = bit_dp_solution(0, l / 2, oookayama);
+            auto day2 = bit_dp_solution(l / 2, l, suzukake);
             result.insert(result.end(), day1.begin(), day1.end());
             result.insert(result.end(), day2.begin(), day2.end());
-        }
-        else {
+        } else {
             std::vector groups(partition_count, std::vector<Block>());
             std::vector<int> counter(partition_count, 0);
             int now = 0;
-            for(auto block: oookayama) {
-                if(counter[now] > (sum + partition_count - 1) / partition_count) {
+            for (auto block : oookayama) {
+                if (counter[now] >
+                    (sum + partition_count - 1) / partition_count) {
                     now++;
                 }
                 assert(now < partition_count);
@@ -239,8 +243,7 @@ struct examiner_assignment_solver {
                 counter[now] += (int)block.students.size();
             }
             // グループ間の入れ替えをしていってより良いものにする
-            while(true) {
-
+            while (true) {
             }
         }
         return result;
@@ -253,8 +256,10 @@ struct examiner_assignment_solver {
     */
 
   private:
-    int l;
+    // int l;
     std::vector<Professor> professors;
     const int INF = std::numeric_limits<int>::max();
     const int section = 5;
 };
+
+}  // namespace examiner_assignment
