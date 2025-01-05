@@ -1,5 +1,3 @@
-#pragma once
-
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -7,13 +5,13 @@
 #include <vector>
 
 #include "../util/io_util.hpp"
-#include "user.hpp"
+#include "solver.hpp"
 
-namespace memo
+namespace examiner_assignment
 {
 
-    std::vector<Professor> examiner_assignment_input(std::string professor_filename,
-                                                     std::string student_filename)
+    void examiner_assignment_solver::input(std::string professor_filename,
+                                           std::string student_filename)
     {
         const int examiner_count = 4;
         std::ifstream prof_file(professor_filename, std::ios::in);
@@ -23,22 +21,20 @@ namespace memo
         }
         std::string str_buf, str_conma_buf;
         std::getline(prof_file, str_buf);
-        std::vector<std::string> time_window;
         int professor_name_index, campus_index;
         std::vector<int> professor_possible_index;
         {
             auto line = get_line_split_by_c(str_buf, ',');
             professor_name_index = get_column_index(line, "ご自身のお名前をお選びください");
             campus_index = get_column_index(line, "キャンパス");
-            for (auto time : time_window)
+            for (auto label : time_window_label)
             {
-                professor_possible_index.emplace_back(get_column_index(line, time));
+                professor_possible_index.emplace_back(get_column_index(line, label));
             }
         }
 
-        std::vector<Professor> professors;
-
         std::map<std::string, std::string> table;
+        std::vector<Professor> professors;
 
         while (std::getline(prof_file, str_buf))
         {
@@ -91,33 +87,57 @@ namespace memo
         while (std::getline(student_file, str_buf))
         {
             auto line = get_line_split_by_c(str_buf, ',');
+            std::string student_number = line[student_number_index];
             std::string name = line[student_name_index];
-            std::string supervisor = line[supervisor_index];
             std::string main_examiner = line[main_examiner_index];
             assert(table.contains(main_examiner));
             std::string is_possible = table[main_examiner];
-            std::vector<std::string> assign_professors;
+            std::vector<std::string> assign_professors = {main_examiner};
             for (auto index : deputy_examiner_index)
             {
-                std::string name = line[index];
-                assign_professors.emplace_back(name);
-                auto s = table[name];
-                for (int j = 0; j < l; j++)
+                if(index >= line.size()) continue;
+                std::string deputy_name = line[index];
+                if(deputy_name.empty()) continue;
+                assign_professors.emplace_back(deputy_name);
+                if(!table.contains(deputy_name)) {
+                    continue;
+                }
+                auto s = table[deputy_name];
+                for (int j = 0; j < (int)s.size(); j++)
                 {
                     if (s[j] == 'x')
-                        is_possible = 'x';
+                        is_possible[j] = 'x';
                 }
             }
             for (auto &prof : professors)
             {
-                if (prof.name == supervisor)
+                if (prof.name == main_examiner)
                 {
-                    prof.students.emplace_back(name, supervisor, assign_professors,
+                    prof.students.emplace_back(student_number, name, main_examiner, assign_professors,
                                                is_possible);
                 }
             }
         }
-        return professors;
+        for(auto prof: professors) {
+            if(prof.students.empty()) continue;
+            if(prof.campus == "O") {
+                oookayama.emplace_back(prof);
+            }
+            else {
+                assert(prof.campus == "S");
+                if(prof.students.size() > 5) {
+                    auto lhs = prof;
+                    auto rhs = prof;
+                    lhs.students = {prof.students.begin(), prof.students.begin() + 3};
+                    rhs.students = {prof.students.begin() + 3, prof.students.end()};
+                    suzukake.emplace_back(lhs);
+                    suzukake.emplace_back(rhs);
+                
+                    continue;
+                }
+                suzukake.emplace_back(prof);
+            }
+        }
     }
 
 } // namespace examiner_assignment

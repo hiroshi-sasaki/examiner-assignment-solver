@@ -13,7 +13,7 @@
 
 #include "user.hpp"
 
-namespace examiner_assignment {
+namespace memo {
 
 struct examiner_assignment_solver {
     struct Block {
