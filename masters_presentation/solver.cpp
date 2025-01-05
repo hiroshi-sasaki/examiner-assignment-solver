@@ -3,6 +3,7 @@
 #include <limits>
 #include <random>
 #include <string>
+#include <algorithm>
 
 #include "solver.hpp"
 

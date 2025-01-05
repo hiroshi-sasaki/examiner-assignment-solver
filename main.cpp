@@ -3,8 +3,8 @@
 
 #include "concept_presentation/concept_presentation.cpp"
 #include "research_project/research_project.cpp"
-#include "memo/io.hpp"
-#include "masters_presentation/solver.hpp"
+#include "masters_presentation/solver.cpp"
+#include "masters_presentation/io.cpp"
 #include "util/io_util.cpp"
 
 int main(int argc, char *argv[]) {

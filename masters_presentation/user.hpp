@@ -21,6 +21,10 @@ struct Professor {
     std::string is_possible;
 
     std::vector<Student> students;
+
+    bool operator==(const Professor &rhs) const {
+      return name == rhs.name;
+    }
 };
 
 struct Slot {

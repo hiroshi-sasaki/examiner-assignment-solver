@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "../util/io_util.hpp"
 #include "solver.hpp"
+#include "../util/io_util.hpp"
 
 namespace examiner_assignment
 {
@@ -58,7 +58,7 @@ namespace examiner_assignment
             prof.name = name;
             prof.is_possible = is_possible;
             prof.campus = campus;
-            professors.emplace_back(prof);
+            insert_or_assign(professors, prof);
             table[name] = is_possible;
         }
 
