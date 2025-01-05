@@ -98,36 +98,35 @@ namespace examiner_assignment
     {
         const int n = (int)professors.size();
         const int INF = std::numeric_limits<int>::max();
-        std::vector<int> dp(1 << n, INF);
+        std::vector<std::pair<int,int>> dp(1 << n, {INF, 0});
         std::vector<int> memo(1 << n, -1);
-        dp[0] = start;
-
-        int max = -1;
+        dp[0] = {start, 0};
 
         for (int bit = 0; bit < (1 << n); bit++)
         {
-            if (dp[bit] == INF)
+            if (dp[bit].first == INF)
                 continue;
             for (int i = 0; i < n; i++)
             {
                 if ((bit >> i) & 1)
                     continue;
-                int r = min_left(professors[i], dp[bit]);
+                int r = min_left(professors[i], dp[bit].first);
                 if (r == INF)
                     continue;
-                if (r / per != (r + (int)professors[i].students.size() - 1) / per)
+                int c = professors[i].students.size();
+                if (r / per != (r + c - 1) / per)
                 {
                     r = (r / per + 1) * per;
                 }
-                r += (int)professors[i].students.size();
-                if (r < dp[bit | (1 << i)])
+                r += c;
+                if (std::pair<int,int>{r, dp[bit].second - c} < dp[bit | (1 << i)])
                 {
-                    dp[bit | (1 << i)] = r;
+                    dp[bit | (1 << i)] = std::pair{r, dp[bit].second - c};
                     memo[bit | (1 << i)] = i;
                 }
             }
         }
-        if (dp.back() == INF)
+        if (dp.back().first == INF)
         {
             return {};
         }
@@ -160,7 +159,7 @@ namespace examiner_assignment
             {
                 auto student = prof.students[i];
                 assert(check(student.is_possible, now));
-                schedule[now - start] = Slot{student.number, student.name, student.supervisor, student.assign_professors};
+                schedule[now - start] = Slot{student.number, student.name, student.supervisor, student.assign_professors, student.is_possible};
                 now++;
             }
         }
@@ -181,7 +180,7 @@ namespace examiner_assignment
         std::cout << h << ":" << m << "0";
     }
 
-    void examiner_assignment_solver::output(std::vector<Slot> schedule) const
+    void examiner_assignment_solver::output(std::vector<Slot> &schedule)
     {
         int i = 0;
         while (i * per < (int)schedule.size())
@@ -194,8 +193,9 @@ namespace examiner_assignment
             {
                 if (j > 0 && j % 4 == 0 && j != per - 1)
                 {
+                    
                     output_time(h, m);
-                    std::cout << "休憩" << std::endl;
+                    std::cout << ",休憩" << std::endl;
                     m++;
                     while (m >= 6)
                     {
@@ -208,6 +208,7 @@ namespace examiner_assignment
                 }
 
                 output_time(h, m);
+                schedule[i * per + j].m = h * 6 + m;
                 std::cout << ',';
                 output_slot(schedule[i * per + j]);
                 std::cout << std::endl;
@@ -227,30 +228,72 @@ namespace examiner_assignment
         for (int i = 0; i < 1; i++)
         {
             std::cout << "--plan" << i + 1 << "---" << std::endl;
+
+            auto professors = professors_;
+
+            std::vector<Professor> oookayama, suzukake;
+            for(auto prof: professors) {
+                if(prof.students.empty()) continue;
+                if(prof.campus == "O") {
+                    oookayama.emplace_back(prof);
+                }
+                else {
+                    assert(prof.campus == "S");
+                    if(prof.students.size() > 5) {
+                        auto lhs = prof;
+                        auto rhs = prof;
+                        lhs.students = {prof.students.begin(), prof.students.begin() + 4};
+                        rhs.students = {prof.students.begin() + 4, prof.students.end()};
+                        suzukake.emplace_back(lhs);
+                        suzukake.emplace_back(rhs);
+
+                        continue;
+                    }
+                    suzukake.emplace_back(prof);
+                }
+            }
+            // shuffle_vector(suzukake);
+            // shuffle_vector(oookayama);
+
             auto suzukake_sol = bit_dp_solution(0, per * 3, suzukake);
             auto suzukake_schedule = construct_schedule(0, per * 3, suzukake_sol);
             auto oookayama_sol = bit_dp_solution(per * 4, per * 5, oookayama);
             auto oookayama_schedule = construct_schedule(per * 4, per * 5, oookayama_sol);
 
-            auto schedule = suzukake_schedule;
+            schedule = suzukake_schedule;
             schedule.insert(schedule.end(), oookayama_schedule.begin(), oookayama_schedule.end());
-
-            /*
-            std::vector<Student> s;
-            for (auto prof : oookayama)
-            {
-                s.insert(s.end(), prof.students.begin(), prof.students.end());
-            }
-            bit_dp_solution(per * 4, per * 5, s);
-            */
 
             if (!oookayama_schedule.empty() && !suzukake_schedule.empty())
             {
                 output(schedule);
             }
 
-            shuffle_vector(suzukake);
-            shuffle_vector(oookayama);
+            if(!intermediate_examiner_students.empty()) {
+                auto intermediate_schedule = intermediate_examination(construct_intermediate_professors_plan(false));
+                intermediate_examination_assign(intermediate_schedule);
+                /*
+                int now = 0;
+                for(int j = 0; auto t: intermediate_time) {
+                    while(t--) {
+                        auto supervisor = intermediate_schedule[now].supervisor;
+                        for(auto &prof: professors) {
+                            if(prof.name == supervisor) {
+                                prof.is_possible[2 * section + j] = 'x';
+                            }
+                            for(auto &student: prof.students) {
+                                for(auto name: student.assign_professors) {
+                                    if(name == supervisor) {
+                                        student.is_possible[2 * section + j] = 'x';
+                                    }
+                                }
+                            }
+                        }
+                        now++;
+                    }
+                    j++;
+                }
+                */
+            }
         }
     }
 }

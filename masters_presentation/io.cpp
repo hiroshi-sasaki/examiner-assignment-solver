@@ -34,7 +34,6 @@ namespace examiner_assignment
         }
 
         std::map<std::string, std::string> table;
-        std::vector<Professor> professors;
 
         while (std::getline(prof_file, str_buf))
         {
@@ -58,7 +57,7 @@ namespace examiner_assignment
             prof.name = name;
             prof.is_possible = is_possible;
             prof.campus = campus;
-            insert_or_assign(professors, prof);
+            insert_or_assign(professors_, prof);
             table[name] = is_possible;
         }
 
@@ -91,6 +90,9 @@ namespace examiner_assignment
             std::string name = line[student_name_index];
             std::string main_examiner = line[main_examiner_index];
             assert(table.contains(main_examiner));
+
+            assign_count[main_examiner]++;
+
             std::string is_possible = table[main_examiner];
             std::vector<std::string> assign_professors = {main_examiner};
             for (auto index : deputy_examiner_index)
@@ -98,7 +100,10 @@ namespace examiner_assignment
                 if(index >= line.size()) continue;
                 std::string deputy_name = line[index];
                 if(deputy_name.empty()) continue;
+
                 assign_professors.emplace_back(deputy_name);
+                assign_count[deputy_name]++;
+
                 if(!table.contains(deputy_name)) {
                     continue;
                 }
@@ -109,7 +114,7 @@ namespace examiner_assignment
                         is_possible[j] = 'x';
                 }
             }
-            for (auto &prof : professors)
+            for (auto &prof : professors_)
             {
                 if (prof.name == main_examiner)
                 {
@@ -118,25 +123,38 @@ namespace examiner_assignment
                 }
             }
         }
-        for(auto prof: professors) {
-            if(prof.students.empty()) continue;
-            if(prof.campus == "O") {
-                oookayama.emplace_back(prof);
-            }
-            else {
-                assert(prof.campus == "S");
-                if(prof.students.size() > 5) {
-                    auto lhs = prof;
-                    auto rhs = prof;
-                    lhs.students = {prof.students.begin(), prof.students.begin() + 3};
-                    rhs.students = {prof.students.begin() + 3, prof.students.end()};
-                    suzukake.emplace_back(lhs);
-                    suzukake.emplace_back(rhs);
-                
-                    continue;
-                }
-                suzukake.emplace_back(prof);
-            }
+    }
+
+    void examiner_assignment_solver::intermediate_examination_input(std::string filename) {
+        std::ifstream file(filename, std::ios::in);
+        if (!file)
+        {
+            std::cerr << "cannot open file: " << filename << std::endl;
+        }
+        std::string str_buf, str_conma_buf;
+        std::getline(file, str_buf);
+
+        int student_number_index, student_name_index, supervisor_index;
+        {
+            auto line = get_line_split_by_c(str_buf, ',');
+            student_number_index = get_column_index(line, "学籍番号／Student ID  No.");
+            student_name_index = get_column_index(line, "氏名／Name");
+            supervisor_index = get_column_index(line, "主指導教員を選んでください／Choose your main academic supervisor.");
+        }
+
+        while (std::getline(file, str_buf))
+        {
+            auto line = get_line_split_by_c(str_buf, ',');
+            std::string student_number = line[student_number_index];
+            std::string student_name = line[student_name_index];
+            std::string supervisor = line[supervisor_index];
+            Student student;
+            student.name = student_name;
+            student.number = student_number;
+            student.supervisor = supervisor;
+            student.assign_professors = {supervisor};
+            intermediate_examiner_students.emplace_back(student);
+            assign_count[supervisor]++;
         }
     }
 

@@ -32,6 +32,8 @@ struct Slot {
     std::string presenter = "rest";
     std::string supervisor = "rest";
     std::vector<std::string> assign_professor;
+    std::string is_possible;
+    int m = 0;
 };
 
 }  // namespace examiner_assignment

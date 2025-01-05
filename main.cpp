@@ -5,6 +5,7 @@
 #include "research_project/research_project.cpp"
 #include "masters_presentation/solver.cpp"
 #include "masters_presentation/io.cpp"
+#include "masters_presentation/intermediate_examination.cpp"
 #include "util/io_util.cpp"
 
 int main(int argc, char *argv[]) {
@@ -21,10 +22,15 @@ int main(int argc, char *argv[]) {
         int type = std::stoi(argv[3]);
         research_project::run(filename, type);
     } else if(event == "masters_presentation") {
-        assert(argc == 4);
+        assert(argc == 4 || argc == 5);
         std::string professor_filename = argv[2];
         std::string student_filename = argv[3];
         examiner_assignment::examiner_assignment_solver solver(professor_filename, student_filename);
+
+        if(argc == 5) {
+            solver.intermediate_examination_input(argv[4]);
+        }
+        
         solver.run();
     } else {
         assert(0);
