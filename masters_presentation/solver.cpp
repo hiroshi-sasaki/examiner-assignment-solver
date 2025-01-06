@@ -177,7 +177,8 @@ namespace examiner_assignment
     }
     void examiner_assignment_solver::output_time(int h, int m) const
     {
-        std::cout << h << ":" << m << "0";
+        std::cout << h << ":" << m;
+        if(m == 0) std::cout << '0';
     }
 
     void examiner_assignment_solver::output(std::vector<Slot> &schedule)
@@ -195,29 +196,72 @@ namespace examiner_assignment
                 {
                     
                     output_time(h, m);
-                    std::cout << ",休憩" << std::endl;
-                    m++;
-                    while (m >= 6)
+                    std::cout << "休憩" << std::endl;
+                    m += 10;
+                    while (m >= 60)
                     {
-                        m -= 6;
+                        m -= 60;
                         h++;
                     }
 
-                    if (h == 16 && m == 3)
-                        m++;
+                    if (h == 16 && m == 30)
+                        m += 10;
                 }
 
                 output_time(h, m);
-                schedule[i * per + j].m = h * 6 + m;
+                schedule[i * per + j].m = h * 60 + m;
                 std::cout << ',';
                 output_slot(schedule[i * per + j]);
                 std::cout << std::endl;
-                m += 2;
-                while (m >= 6)
+                m += 20;
+                while (m >= 60)
                 {
-                    m -= 6;
+                    m -= 60;
                     h++;
                 }
+            }
+            i++;
+        }
+    }
+
+    void examiner_assignment_solver::output_intermediate_examination_assign(std::vector<Slot> &intermediate_schedule) const {
+        std::cout << "中間審査" << std::endl;
+        std::cout << "時間,学籍番号,主審査員,副審査1,副審査2" << std::endl;
+        int h = 9, m = 0;
+        int index = 0;
+        for(int i = 0; auto t: intermediate_time) {
+            if(i == 1) {
+                std::cout << "昼休憩,12:00~13:00" << std::endl;
+                h++;
+            }
+            while(t > 0) {
+                if(index > 0 && index % 3 == 0) {
+                    output_time(h, m);
+                    std::cout << ",休憩" << std::endl;
+                    m += 15;
+                    while(m >= 60) {
+                        m -= 60;
+                        h++;
+                    }
+                }
+
+                auto &slot = intermediate_schedule[index];
+                slot.m = h * 6 + m;
+                output_time(h, m);
+                std::cout << ',' << slot.student_number;
+                for(auto prof: slot.assign_professor) {
+                    std::cout << ',' << prof;
+                }
+                std::cout << std::endl;
+
+                m += 15;
+                while(m >= 60) {
+                    m -= 60;
+                    h++;
+                }
+
+                index++;
+                t--;
             }
             i++;
         }
@@ -227,8 +271,6 @@ namespace examiner_assignment
     {
         for (int i = 0; i < 1; i++)
         {
-            std::cout << "--plan" << i + 1 << "---" << std::endl;
-
             auto professors = professors_;
 
             std::vector<Professor> oookayama, suzukake;
@@ -271,28 +313,7 @@ namespace examiner_assignment
             if(!intermediate_examiner_students.empty()) {
                 auto intermediate_schedule = intermediate_examination(construct_intermediate_professors_plan(false));
                 intermediate_examination_assign(intermediate_schedule);
-                /*
-                int now = 0;
-                for(int j = 0; auto t: intermediate_time) {
-                    while(t--) {
-                        auto supervisor = intermediate_schedule[now].supervisor;
-                        for(auto &prof: professors) {
-                            if(prof.name == supervisor) {
-                                prof.is_possible[2 * section + j] = 'x';
-                            }
-                            for(auto &student: prof.students) {
-                                for(auto name: student.assign_professors) {
-                                    if(name == supervisor) {
-                                        student.is_possible[2 * section + j] = 'x';
-                                    }
-                                }
-                            }
-                        }
-                        now++;
-                    }
-                    j++;
-                }
-                */
+                output_intermediate_examination_assign(intermediate_schedule);
             }
         }
     }

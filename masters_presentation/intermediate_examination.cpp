@@ -153,7 +153,8 @@ namespace examiner_assignment {
             int bit = (1<<n) - 1;
             while(bit > 0) {
                 int i = prev[bit];
-                slots[dp[bit].first - 1].presenter = intermediate_examiner_students[i].number;
+                slots[dp[bit].first - 1].student_number = intermediate_examiner_students[i].number;
+                slots[dp[bit].first - 1].presenter = intermediate_examiner_students[i].name;
                 slots[dp[bit].first - 1].supervisor = intermediate_examiner_students[i].supervisor;
                 slots[dp[bit].first - 1].assign_professor = intermediate_examiner_students[i].assign_professors;
                 bit ^= 1<<i;
@@ -201,13 +202,6 @@ namespace examiner_assignment {
                     if(now_assign >= 3) break;
                 }
             }
-        }
-        for(auto slot: slots) {
-            std::cout << slot.presenter;
-            for(auto professor: slot.assign_professor) {
-                std::cout << ',' << professor;
-            } 
-            std::cout << std::endl;
         }
         return;
     }

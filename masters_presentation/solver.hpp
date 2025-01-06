@@ -18,6 +18,8 @@ namespace examiner_assignment
 
         void output_time(int, int) const;
 
+        void output_intermediate_examination_assign(std::vector<Slot>&) const;
+
         int min_left(Professor, int) const;
 
         bool check(std::string, int) const;
