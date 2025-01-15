@@ -12,7 +12,8 @@ namespace examiner_assignment
     struct examiner_assignment_solver
     {
     private:
-        void input(std::string, std::string);
+        void masters_presentation_init(std::string);
+        void bachelor_presentation_init(std::string);
 
         void output_slot(Slot) const;
 
@@ -34,24 +35,30 @@ namespace examiner_assignment
         void intermediate_examination_assign(std::vector<Slot> &);
 
     public:
-        examiner_assignment_solver(std::string, std::string);
+        examiner_assignment_solver() = default;
+
+        void masters_presentation_input(std::string, std::string, std::string);
 
         void intermediate_examination_input(std::string);
+
+        void bachelor_presentation_input(std::string, std::string, std::string);
 
         std::vector<Slot> construct_schedule(int start, int end, std::vector<Professor>) const;
 
         void output(std::vector<Slot>&);
 
+        void bachelor_presentation_run();
+
         void run();
 
     private:
         std::vector<std::string> time_window_label;
-        const int day = 5, section = 4;
+        int day, section;
         int per = 0;
-        std::vector<int> time = {8, 4, 9, 3};
+        std::vector<int> time;
 
         const int k = 3;
-        std::vector<int> intermediate_time = {9,2,10,3};
+        std::vector<int> intermediate_time;
 
         std::vector<int> accumulate;
 

@@ -22,16 +22,25 @@ int main(int argc, char *argv[]) {
         int type = std::stoi(argv[3]);
         research_project::run(filename, type);
     } else if(event == "masters_presentation") {
-        assert(argc == 4 || argc == 5);
-        std::string professor_filename = argv[2];
-        std::string student_filename = argv[3];
-        examiner_assignment::examiner_assignment_solver solver(professor_filename, student_filename);
+        assert(argc == 5 || argc == 6);
+        std::string time_filename = argv[2];
+        std::string professor_filename = argv[3];
+        std::string student_filename = argv[4];
+        examiner_assignment::examiner_assignment_solver solver;
+        solver.masters_presentation_input(time_filename, professor_filename, student_filename);
 
-        if(argc == 5) {
-            solver.intermediate_examination_input(argv[4]);
+        if(argc == 6) {
+            solver.intermediate_examination_input(argv[5]);
         }
         
         solver.run();
+    } else if(event == "bachelor_presentation") {
+        std::string time_filename = argv[2];
+        std::string professor_filename = argv[3];
+        std::string student_filename = argv[4];
+        examiner_assignment::examiner_assignment_solver solver;
+        solver.bachelor_presentation_input(time_filename, professor_filename, student_filename);
+        solver.bachelor_presentation_run();
     } else {
         assert(0);
     }

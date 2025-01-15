@@ -4,7 +4,9 @@
 #include <random>
 #include <string>
 #include <algorithm>
+#include <fstream>
 
+#include "../util/io_util.hpp"
 #include "solver.hpp"
 
 namespace examiner_assignment
@@ -18,8 +20,40 @@ namespace examiner_assignment
         std::shuffle(v.begin(), v.end(), engine);
     }
 
-    examiner_assignment_solver::examiner_assignment_solver(std::string professor_filename, std::string student_filename)
+    void examiner_assignment_solver::masters_presentation_init(std::string time_filename)
     {
+        std::ifstream time_file(time_filename, std::ios::in);
+        if(!time_file) {
+            std::cerr << "cannot open file: " << time_filename << std::endl;
+        }
+        std::string str_buf;
+        {
+            std::getline(time_file, str_buf);
+            auto line = get_line_split_by_c(str_buf, ' ');
+            day = std::stoi(line[0]);
+            section =  std::stoi(line[1]);
+        }
+        {
+            std::getline(time_file, str_buf);
+            auto line = get_line_split_by_c(str_buf, ' ');
+            assert(line.size() == section);
+            for(auto x: line) {
+                time.emplace_back(std::stoi(x));
+            }
+        }
+        {
+            std::getline(time_file, str_buf);
+            auto line = get_line_split_by_c(str_buf, ' ');
+            assert(line.size() == section);
+            for(auto x: line) {
+                intermediate_time.emplace_back(std::stoi(x));
+            }
+        }
+        while(std::getline(time_file, str_buf)) {
+            auto line = get_line_split_by_c(str_buf, ' ');
+            assert(line.size() == 1);
+            time_window_label.emplace_back(line[0]);
+        }
         accumulate.resize(day * section + 1);
         accumulate[0] = 0;
         for (int i = 0; i < section; i++)
@@ -33,8 +67,49 @@ namespace examiner_assignment
                 accumulate[i * section + j + 1] = accumulate[i * section + j] + time[j];
             }
         }
-        input(professor_filename, student_filename);
     }
+
+    void examiner_assignment_solver::bachelor_presentation_init(std::string time_filename)
+    {
+        std::ifstream time_file(time_filename, std::ios::in);
+        if(!time_file) {
+            std::cerr << "cannot open file: " << time_filename << std::endl;
+        }
+        std::string str_buf;
+        {
+            std::getline(time_file, str_buf);
+            auto line = get_line_split_by_c(str_buf, ' ');
+            day = std::stoi(line[0]);
+            section =  std::stoi(line[1]);
+        }
+        {
+            std::getline(time_file, str_buf);
+            auto line = get_line_split_by_c(str_buf, ' ');
+            assert(line.size() == section);
+            for(auto x: line) {
+                time.emplace_back(std::stoi(x));
+            }
+        }
+        {
+            std::getline(time_file, str_buf);
+            time_window_label = get_line_split_by_c(str_buf, ',');
+            assert(time_window_label.size() == day * section);
+        }
+        accumulate.resize(day * section + 1);
+        accumulate[0] = 0;
+        for (int i = 0; i < section; i++)
+        {
+            per += time[i];
+        }
+        for (int i = 0; i < day; i++)
+        {
+            for (int j = 0; j < section; j++)
+            {
+                accumulate[i * section + j + 1] = accumulate[i * section + j] + time[j];
+            }
+        }
+    }
+
 
     int examiner_assignment_solver::min_left(Professor prof, int start) const
     {
@@ -126,7 +201,7 @@ namespace examiner_assignment
                 }
             }
         }
-        if (dp.back().first == INF)
+        if (dp.back().first > end)
         {
             return {};
         }
@@ -264,6 +339,40 @@ namespace examiner_assignment
                 t--;
             }
             i++;
+        }
+    }
+
+    void examiner_assignment_solver::bachelor_presentation_run() {
+        auto professors = professors_;
+        std::vector<Professor> oookayama, suzukake;
+        for(auto prof: professors) {
+            if(prof.students.empty()) continue;
+            if(prof.campus == "O") {
+                oookayama.emplace_back(prof);
+            }
+            else {
+                assert(prof.campus == "S");
+                if(prof.students.size() > 5) {
+                    auto lhs = prof;
+                    auto rhs = prof;
+                    lhs.students = {prof.students.begin(), prof.students.begin() + 4};
+                    rhs.students = {prof.students.begin() + 4, prof.students.end()};
+                    suzukake.emplace_back(lhs);
+                    suzukake.emplace_back(rhs);
+                    continue;
+                }
+                suzukake.emplace_back(prof);
+            }
+        }
+        auto oookayama_sol = bit_dp_solution(0, per, oookayama);
+        auto oookayama_schedule = construct_schedule(0, per, oookayama_sol);
+        auto suzukake_sol = bit_dp_solution(per, 2 * per, suzukake);
+        auto suzukake_schedule = construct_schedule(per, 2 * per, suzukake_sol);
+        for(auto s: oookayama_schedule) {
+            std::cout << s.student_number << std::endl;
+        }
+        for(auto s: suzukake_schedule) {
+            std::cout << s.student_number << std::endl;
         }
     }
 
