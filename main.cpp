@@ -6,6 +6,7 @@
 #include "masters_presentation/solver.cpp"
 #include "masters_presentation/io.cpp"
 #include "masters_presentation/intermediate_examination.cpp"
+#include "masters_presentation/bachelor_examination.cpp"
 #include "util/io_util.cpp"
 
 int main(int argc, char *argv[]) {

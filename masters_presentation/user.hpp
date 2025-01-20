@@ -13,6 +13,10 @@ struct Student {
     std::vector<std::string> assign_professors;
 
     std::string is_possible;
+
+    bool operator==(const Student &rhs) const {
+      return number == rhs.number && name == rhs.name && supervisor == rhs.supervisor;
+    }
 };
 
 struct Professor {

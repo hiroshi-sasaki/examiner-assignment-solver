@@ -211,7 +211,8 @@ namespace examiner_assignment
                     student.number = student_number;
                     student.supervisor = supervisor;
                     student.is_possible = is_possible;
-                    prof.students.emplace_back(student);
+                    int ret = prof.students.size();
+                    insert_or_assign(prof.students, student);
                 }
             }
         }
@@ -229,9 +230,9 @@ namespace examiner_assignment
         int student_number_index, student_name_index, supervisor_index;
         {
             auto line = get_line_split_by_c(str_buf, ',');
-            student_number_index = get_column_index(line, "学籍番号／Student ID  No.");
-            student_name_index = get_column_index(line, "氏名／Name");
-            supervisor_index = get_column_index(line, "主指導教員を選んでください／Choose your main academic supervisor.");
+            student_number_index = get_column_index(line, "学籍番号");
+            student_name_index = get_column_index(line, "氏名");
+            supervisor_index = get_column_index(line, "主指導教員を選んでください。");
         }
 
         while (std::getline(file, str_buf))

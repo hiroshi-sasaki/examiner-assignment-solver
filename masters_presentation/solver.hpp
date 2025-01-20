@@ -21,6 +21,8 @@ namespace examiner_assignment
 
         void output_intermediate_examination_assign(std::vector<Slot>&) const;
 
+        void output_bachelor_presentation_assign(std::vector<Slot>&, std::vector<Slot> &) const;
+
         int min_left(Professor, int) const;
 
         bool check(std::string, int) const;
@@ -33,6 +35,8 @@ namespace examiner_assignment
         std::vector<Slot> intermediate_examination(std::vector<Professor>) const;
 
         void intermediate_examination_assign(std::vector<Slot> &);
+
+        void bachelor_presentation_assign(std::vector<Slot> &, std::vector<Slot> &);
 
     public:
         examiner_assignment_solver() = default;
@@ -55,6 +59,7 @@ namespace examiner_assignment
         std::vector<std::string> time_window_label;
         int day, section;
         int per = 0;
+        int day1_count = 0, day2_count = 0;
         std::vector<int> time;
 
         const int k = 3;

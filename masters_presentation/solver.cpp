@@ -69,47 +69,6 @@ namespace examiner_assignment
         }
     }
 
-    void examiner_assignment_solver::bachelor_presentation_init(std::string time_filename)
-    {
-        std::ifstream time_file(time_filename, std::ios::in);
-        if(!time_file) {
-            std::cerr << "cannot open file: " << time_filename << std::endl;
-        }
-        std::string str_buf;
-        {
-            std::getline(time_file, str_buf);
-            auto line = get_line_split_by_c(str_buf, ' ');
-            day = std::stoi(line[0]);
-            section =  std::stoi(line[1]);
-        }
-        {
-            std::getline(time_file, str_buf);
-            auto line = get_line_split_by_c(str_buf, ' ');
-            assert(line.size() == section);
-            for(auto x: line) {
-                time.emplace_back(std::stoi(x));
-            }
-        }
-        {
-            std::getline(time_file, str_buf);
-            time_window_label = get_line_split_by_c(str_buf, ',');
-            assert(time_window_label.size() == day * section);
-        }
-        accumulate.resize(day * section + 1);
-        accumulate[0] = 0;
-        for (int i = 0; i < section; i++)
-        {
-            per += time[i];
-        }
-        for (int i = 0; i < day; i++)
-        {
-            for (int j = 0; j < section; j++)
-            {
-                accumulate[i * section + j + 1] = accumulate[i * section + j] + time[j];
-            }
-        }
-    }
-
 
     int examiner_assignment_solver::min_left(Professor prof, int start) const
     {
@@ -173,35 +132,37 @@ namespace examiner_assignment
     {
         const int n = (int)professors.size();
         const int INF = std::numeric_limits<int>::max();
-        std::vector<std::pair<int,int>> dp(1 << n, {INF, 0});
+        std::vector<int> dp(1 << n, INF);
         std::vector<int> memo(1 << n, -1);
-        dp[0] = {start, 0};
+        dp[0] = start;
 
         for (int bit = 0; bit < (1 << n); bit++)
         {
-            if (dp[bit].first == INF)
+            if (dp[bit] == INF)
                 continue;
             for (int i = 0; i < n; i++)
             {
                 if ((bit >> i) & 1)
                     continue;
-                int r = min_left(professors[i], dp[bit].first);
+                int r = min_left(professors[i], dp[bit]);
                 if (r == INF)
                     continue;
                 int c = professors[i].students.size();
+                /*
                 if (r / per != (r + c - 1) / per)
                 {
                     r = (r / per + 1) * per;
                 }
+                */
                 r += c;
-                if (std::pair<int,int>{r, dp[bit].second - c} < dp[bit | (1 << i)])
+                if (r < dp[bit | (1 << i)])
                 {
-                    dp[bit | (1 << i)] = std::pair{r, dp[bit].second - c};
+                    dp[bit | (1 << i)] = r;
                     memo[bit | (1 << i)] = i;
                 }
             }
         }
-        if (dp.back().first > end)
+        if (dp.back() > end)
         {
             return {};
         }
@@ -321,7 +282,7 @@ namespace examiner_assignment
                 }
 
                 auto &slot = intermediate_schedule[index];
-                slot.m = h * 6 + m;
+                slot.m = h * 60 + m;
                 output_time(h, m);
                 std::cout << ',' << slot.student_number;
                 for(auto prof: slot.assign_professor) {
@@ -339,40 +300,6 @@ namespace examiner_assignment
                 t--;
             }
             i++;
-        }
-    }
-
-    void examiner_assignment_solver::bachelor_presentation_run() {
-        auto professors = professors_;
-        std::vector<Professor> oookayama, suzukake;
-        for(auto prof: professors) {
-            if(prof.students.empty()) continue;
-            if(prof.campus == "O") {
-                oookayama.emplace_back(prof);
-            }
-            else {
-                assert(prof.campus == "S");
-                if(prof.students.size() > 5) {
-                    auto lhs = prof;
-                    auto rhs = prof;
-                    lhs.students = {prof.students.begin(), prof.students.begin() + 4};
-                    rhs.students = {prof.students.begin() + 4, prof.students.end()};
-                    suzukake.emplace_back(lhs);
-                    suzukake.emplace_back(rhs);
-                    continue;
-                }
-                suzukake.emplace_back(prof);
-            }
-        }
-        auto oookayama_sol = bit_dp_solution(0, per, oookayama);
-        auto oookayama_schedule = construct_schedule(0, per, oookayama_sol);
-        auto suzukake_sol = bit_dp_solution(per, 2 * per, suzukake);
-        auto suzukake_schedule = construct_schedule(per, 2 * per, suzukake_sol);
-        for(auto s: oookayama_schedule) {
-            std::cout << s.student_number << std::endl;
-        }
-        for(auto s: suzukake_schedule) {
-            std::cout << s.student_number << std::endl;
         }
     }
 
