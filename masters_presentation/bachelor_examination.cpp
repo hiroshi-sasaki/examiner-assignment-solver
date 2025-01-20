@@ -178,7 +178,8 @@ namespace examiner_assignment {
             }
             for(auto prof: professors) {
                 if(prof.name == name) {
-                    int index = std::lower_bound(std::begin(accumulate), std::end(accumulate), i) - accumulate.begin();
+                    int index = std::upper_bound(std::begin(accumulate), std::end(accumulate), i) - accumulate.begin();
+                    index--;
                     return prof.is_possible[index] == 'o';
                 }
             }
