@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-namespace examiner_assignment_solver {
 
 struct Professor {
 private:
@@ -15,5 +14,3 @@ private:
     std::string is_possible = "";
 public:
 };
-
-}  // namespace examiner_assignment_solver

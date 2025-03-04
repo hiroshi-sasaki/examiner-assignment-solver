@@ -10,7 +10,8 @@ include_directories(inc)
 
 set(SOURCES
     main.cc
-    util/io_util.cc
+    src/io_util.cc
+    src/student.cc
 )
 
 add_executable(solver ${SOURCES})
