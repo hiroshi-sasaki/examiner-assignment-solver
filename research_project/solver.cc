@@ -12,6 +12,7 @@
 
 namespace research_project {
 
+// スケジュールがvalidか判定
 bool validator(const std::vector<std::vector<Student>> &schedule) {
     int n = (int)schedule.size();
     int m = schedule.back().size();
@@ -72,6 +73,7 @@ std::vector<std::vector<Student>> create_schedule(
                 if (check(i, j, s.first)) {
                     result[i][j] = s.second.back();
                     s.second.pop_back();
+                    // 2人までは連続させて良い
                     if (!s.second.empty() && j + 1 < slot) {
                         result[i][j + 1] = s.second.back();
                         s.second.pop_back();
