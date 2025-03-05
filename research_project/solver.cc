@@ -8,7 +8,7 @@
 #include <set>
 #include <vector>
 
-#include "io.cc"
+#include "io.h"
 
 namespace research_project {
 
