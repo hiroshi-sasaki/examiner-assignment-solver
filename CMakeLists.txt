@@ -12,8 +12,13 @@ set(SOURCES
     main.cc
     src/io_util.cc
     src/student.cc
+    src/professor.cc
     research_project/io.cc
     research_project/solver.cc
+    concept_presentation/parameter.cc
+    concept_presentation/slot.cc
+    concept_presentation/io.cc
+    concept_presentation/solver.cc
 )
 
 add_executable(solver ${SOURCES})
