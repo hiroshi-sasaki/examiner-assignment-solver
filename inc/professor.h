@@ -36,6 +36,8 @@ struct Professor {
     void set_is_possible(std::string);
     void add_student(Student);
 
+    bool can_assign(int) const;
+
     bool operator==(const Professor &rhs) const {
       return name == rhs.name;
     }

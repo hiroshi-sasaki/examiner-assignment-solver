@@ -1,4 +1,5 @@
 #include "student.h"
+#include "io_util.h"
 
 Student::Student(std::string number_, std::string name_,
                  std::string supervisor_)
@@ -25,4 +26,24 @@ std::string Student::get_supervisor() const {
 
 std::string Student::get_is_possible() const {
     return is_possible;
+}
+
+std::vector<std::string> Student::get_assign_professors() const {
+    return assign_professors;
+}
+
+int Student::assign_count() const {
+    return assign_professors.size();
+}
+
+bool Student::can_assign(int i) const {
+    return is_possible[i] == 'o';
+}
+
+bool Student::valid() const {
+    return number != "N/A";
+}
+
+void Student::assign_professor(std::string name) {
+    insert_or_assign(assign_professors, name);
 }

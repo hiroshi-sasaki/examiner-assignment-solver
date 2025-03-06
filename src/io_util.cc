@@ -61,6 +61,7 @@ Time time_info_input(std::string filename) {
         std::getline(file, str_buf);
         time.time_window_label = get_line_split_by_c(str_buf, ',');
     }
+    time.init();
     return time;
 }
 

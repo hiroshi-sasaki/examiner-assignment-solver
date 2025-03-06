@@ -41,6 +41,10 @@ std::string Professor::get_affiliation() const {
     return affiliation;
 }
 
+bool Professor::can_assign(int i) const {
+    return is_possible[i] == 'o';
+}
+
 void Professor::set_is_possible(std::string is_possible_) {
     is_possible = is_possible_;
 }
