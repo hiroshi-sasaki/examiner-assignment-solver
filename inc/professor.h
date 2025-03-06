@@ -23,6 +23,8 @@ struct Professor {
   public:
     // 構想発表用
     Professor(std::string, ProfessorType, std::string, std::string);
+    // 教員情報のファイルからの読み出し
+    Professor(std::string, std::string, ProfessorType, std::string);
     std::string get_name() const;
     std::string get_campus() const;
     std::vector<Student> get_students() const;

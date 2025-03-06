@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 struct Student {
   private:
@@ -8,6 +9,9 @@ struct Student {
     std::string name = "N/A";
     std::string supervisor = "N/A";
     std::string is_possible = "";
+
+    std::vector<std::string> assignment_professor;
+
   public:
     std::string get_number() const;
     std::string get_name() const;
@@ -20,6 +24,6 @@ struct Student {
     Student() = default;
 
     bool operator==(const Student &rhs) const {
-      return name == rhs.name && number == rhs.number;
+        return name == rhs.name && number == rhs.number;
     }
 };

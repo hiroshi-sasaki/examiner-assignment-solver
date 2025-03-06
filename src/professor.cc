@@ -7,6 +7,10 @@ Professor::Professor(std::string name_, ProfessorType type_,
       is_possible(is_possible_),
       affiliation(affiliation_) {}
 
+Professor::Professor(std::string name_, std::string campus_,
+                     ProfessorType type_, std::string affiliation_)
+    : name(name_), campus(campus_), type(type_), affiliation(affiliation_) {}
+
 std::string Professor::get_campus() const {
     return campus;
 }
