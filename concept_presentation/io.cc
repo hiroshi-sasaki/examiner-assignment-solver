@@ -14,17 +14,13 @@ extern int k;
 
 std::vector<Professor> professor_input(std::string professor_filename) {
     std::ifstream file(professor_filename, std::ios::in);
-    std::string str_buf, str_conma_buf;
+    std::string str_buf;
     std::vector<Professor> professors;
     std::getline(file, str_buf);
     int name_index, work_position_index, affiliation_index, first_slot_index,
         second_slot_index;
     {
-        std::istringstream i_stream(str_buf);
-        std::vector<std::string> line;
-        while (std::getline(i_stream, str_conma_buf, ',')) {
-            line.emplace_back(str_conma_buf);
-        }
+        auto line = get_line_split_by_c(str_buf, ',');
         name_index = get_column_index(line, "ご自身のお名前をお選びください");
         work_position_index = get_column_index(line, "役職");
         affiliation_index = get_column_index(line, "所属研究室");
@@ -32,11 +28,7 @@ std::vector<Professor> professor_input(std::string professor_filename) {
         second_slot_index = get_column_index(line, "[15:15~16:45]");
     }
     while (std::getline(file, str_buf)) {
-        std::istringstream i_stream(str_buf);
-        std::vector<std::string> line;
-        while (std::getline(i_stream, str_conma_buf, ',')) {
-            line.emplace_back(str_conma_buf);
-        }
+        auto line = get_line_split_by_c(str_buf, ',');
         std::string name = line[name_index];
 
         ProfessorType type;

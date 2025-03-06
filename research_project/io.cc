@@ -20,7 +20,7 @@ std::ostream &operator<<(std::ostream &os, const Student &student) {
 std::pair<std::vector<Student>, std::vector<Student>> research_project_input(
     std::string student_filename) {
     std::ifstream file(student_filename, std::ios::in);
-    std::string str_buf, str_conma_buf;
+    std::string str_buf;
     std::vector<Student> first_section, second_section;
     std::getline(file, str_buf);
     int student_number_index, student_name_index, first_index, second_index;
