@@ -33,6 +33,7 @@ struct Professor {
     std::string get_is_possible() const;
     std::string get_affiliation() const;
 
+    void set_is_possible(std::string);
     void add_student(Student);
 
     bool operator==(const Professor &rhs) const {

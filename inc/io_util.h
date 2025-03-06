@@ -1,13 +1,17 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include <vector>
 
-#include "professor.h"
+struct Professor;
+struct Time;
 
 int get_column_index(const std::vector<std::string> &row, std::string target);
 
 std::vector<std::string> get_line_split_by_c(std::string row, char c);
+
+Time time_info_input(std::string);
 
 std::vector<Professor> professor_base_info_input(std::string);
 

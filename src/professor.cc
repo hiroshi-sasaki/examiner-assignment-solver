@@ -1,5 +1,7 @@
 #include "professor.h"
 
+#include "io_util.h"
+
 Professor::Professor(std::string name_, ProfessorType type_,
                      std::string is_possible_, std::string affiliation_)
     : name(name_),
@@ -39,6 +41,10 @@ std::string Professor::get_affiliation() const {
     return affiliation;
 }
 
+void Professor::set_is_possible(std::string is_possible_) {
+    is_possible = is_possible_;
+}
+
 void Professor::add_student(Student student) {
-    students.emplace_back(student);
+    insert_or_assign(students, student);
 }

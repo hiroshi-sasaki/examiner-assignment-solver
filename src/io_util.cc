@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "professor.h"
+#include "time.h"
 
 int get_column_index(const std::vector<std::string> &row, std::string target) {
     auto itr =
@@ -33,6 +34,34 @@ std::vector<std::string> get_line_split_by_c(std::string row, char c) {
         line.emplace_back(str_buf);
     }
     return line;
+}
+
+Time time_info_input(std::string filename) {
+    std::ifstream file(filename, std::ios::in);
+    Time time;
+    if (!file) {
+        std::cerr << "cannot open file: " << filename << std::endl;
+    }
+    std::string str_buf;
+    {
+        std::getline(file, str_buf);
+        auto line = get_line_split_by_c(str_buf, ' ');
+        time.day = std::stoi(line[0]);
+        time.section = std::stoi(line[1]);
+    }
+    {
+        std::getline(file, str_buf);
+        auto line = get_line_split_by_c(str_buf, ' ');
+        for (auto x : line) {
+            time.time.emplace_back(std::stoi(x));
+        }
+        assert(time.time.size() == time.day * time.section);
+    }
+    {
+        std::getline(file, str_buf);
+        time.time_window_label = get_line_split_by_c(str_buf, ',');
+    }
+    return time;
 }
 
 std::vector<Professor> professor_base_info_input(std::string filename) {
