@@ -26,7 +26,6 @@ struct master_presentation_solver {
 
     Time time_info;
     std::vector<Professor> professors_;
-    std::vector<Student> students_;
 
     std::map<std::string, int> assign_count;
 };
