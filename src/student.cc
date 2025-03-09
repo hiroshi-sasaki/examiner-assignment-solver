@@ -1,4 +1,5 @@
 #include "student.h"
+
 #include "io_util.h"
 
 Student::Student(std::string number_, std::string name_,
@@ -11,6 +12,15 @@ Student::Student(std::string number_, std::string name_,
       name(name_),
       supervisor(supervisor_),
       is_possible(is_possible_) {}
+
+Student::Student(std::string number_, std::string name_,
+                 std::string supervisor_, std::string is_possible_,
+                 std::vector<std::string> assign_professors_)
+    : number(number_),
+      name(name_),
+      supervisor(supervisor_),
+      is_possible(is_possible_),
+      assign_professors(assign_professors_) {}
 
 std::string Student::get_name() const {
     return name;
