@@ -23,6 +23,8 @@ set(SOURCES
     concept_presentation/solver.cc
     bachelor_presentation/io.cc
     bachelor_presentation/solver.cc
+    master_presentation/io.cc
+    master_presentation/solver.cc
 )
 
 add_executable(solver ${SOURCES})
