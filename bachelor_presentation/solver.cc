@@ -8,6 +8,13 @@
 
 namespace bachelor_presentation {
 
+bachelor_presentation_solver::bachelor_presentation_solver(
+    std::string time_filename, std::string professor_base_info_filename,
+    std::string professor_filename, std::string student_filename) {
+    input(time_filename, professor_base_info_filename, professor_filename,
+          student_filename);
+}
+
 void bachelor_presentation_solver::professor_assign(
     std::vector<Student> &suzukake_schedule,
     std::vector<Student> &oookayama_schedule) {
@@ -107,18 +114,16 @@ void bachelor_presentation_solver::run() {
             suzukake.emplace_back(prof);
         }
     }
-    auto oookayama_sol =
-        bit_dp_solver(time_info.count_per_day[0],
-                      time_info.count_per_day[0] + time_info.count_per_day[1],
-                      time_info, oookayama);
+    auto suzukake_sol = bit_dp_solver(0, time_info.accumulate_count_per_day[1],
+                                      time_info, suzukake);
+    auto suzukake_schedule = construct_schedule(
+        0, time_info.accumulate_count_per_day[1], time_info, suzukake_sol);
+    auto oookayama_sol = bit_dp_solver(time_info.accumulate_count_per_day[1],
+                                       time_info.accumulate_count_per_day[2],
+                                       time_info, oookayama);
     auto oookayama_schedule = construct_schedule(
-        time_info.count_per_day[0],
-        time_info.count_per_day[0] + time_info.count_per_day[1], time_info,
-        oookayama_sol);
-    auto suzukake_sol =
-        bit_dp_solver(0, time_info.count_per_day[0], time_info, suzukake);
-    auto suzukake_schedule = construct_schedule(0, time_info.count_per_day[0],
-                                                time_info, suzukake_sol);
+        time_info.accumulate_count_per_day[1],
+        time_info.accumulate_count_per_day[2], time_info, oookayama_sol);
     professor_assign(suzukake_schedule, oookayama_schedule);
 }
 

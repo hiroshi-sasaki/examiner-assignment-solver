@@ -25,7 +25,7 @@ struct bachelor_presentation_solver {
     void run();
 
   private:
-    const int k;
+    const int k = 3;
     Time time_info;
     std::vector<Professor> professors_;
     std::vector<Student> students_;

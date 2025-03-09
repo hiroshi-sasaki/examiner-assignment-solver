@@ -27,6 +27,7 @@ struct Student {
 
     Student(std::string, std::string, std::string);
     Student(std::string, std::string, std::string, std::string);
+    Student(std::string, std::string, std::string, std::string, std::vector<std::string>);
 
     Student() = default;
 

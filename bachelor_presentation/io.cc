@@ -18,7 +18,7 @@ void bachelor_presentation_solver::professor_input(
     if (!prof_file) {
         std::cerr << "cannot open file: " << professor_filename << std::endl;
     }
-    std::string str_buf, str_conma_buf;
+    std::string str_buf;
     std::getline(prof_file, str_buf);
     int professor_name_index;
     std::vector<int> professor_possible_index;
