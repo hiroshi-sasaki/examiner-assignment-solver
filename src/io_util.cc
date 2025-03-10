@@ -73,7 +73,7 @@ std::vector<Professor> professor_base_info_input(std::string filename) {
     int name_index, campus_index, work_position_index, affiliation_index;
     {
         auto line = get_line_split_by_c(str_buf, ',');
-        name_index = get_column_index(line, "名前");
+        name_index = get_column_index(line, "氏名");
         campus_index = get_column_index(line, "キャンパス");
         work_position_index = get_column_index(line, "役職");
         affiliation_index = get_column_index(line, "所属研究室");

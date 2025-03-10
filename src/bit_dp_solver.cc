@@ -60,6 +60,7 @@ std::vector<Professor> bit_dp_solver(int start, int end, const Time &time_info,
         }
     }
     if (dp.back() > end) {
+        assert(0);
         return {};
     }
     std::vector<int> order;
