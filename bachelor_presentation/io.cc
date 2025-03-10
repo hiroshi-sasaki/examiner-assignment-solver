@@ -78,7 +78,10 @@ void bachelor_presentation_solver::student_input(std::string student_filename) {
 
         auto itr =
             std::find_if(professors_.begin(), professors_.end(),
-                         [&name](Professor p) { return p.get_name() == name; });
+                         [&supervisor](Professor p) { return p.get_name() == supervisor; });
+        if(itr == professors_.end()) {
+            std::cerr << name << " " << supervisor << std::endl;
+        }
         assert(itr != professors_.end());
         itr->add_student({number, name, supervisor, itr->get_is_possible()});
         assign_count[supervisor]++;

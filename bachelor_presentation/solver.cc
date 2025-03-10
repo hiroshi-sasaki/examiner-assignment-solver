@@ -54,12 +54,16 @@ void bachelor_presentation_solver::professor_assign(
     };
     auto validator = [&]() -> bool {
         for (auto student : suzukake_schedule) {
-            if (student.get_name() == "rest") continue;
-            if (student.assign_count() < k) return false;
+            if (student.get_name() == "N/A") continue;
+            if (student.assign_count() < k) {
+                return false;
+            }
         }
         for (auto student : oookayama_schedule) {
-            if (student.get_name() == "rest") continue;
-            if (student.assign_count() < k) return false;
+            if (student.get_name() == "N/A") continue;
+            if (student.assign_count() < k) {
+                return false;
+            }
         }
         return true;
     };
