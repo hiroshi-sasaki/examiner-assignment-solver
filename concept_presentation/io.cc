@@ -24,8 +24,8 @@ std::vector<Professor> professor_input(std::string professor_filename) {
         name_index = get_column_index(line, "ご自身のお名前をお選びください");
         work_position_index = get_column_index(line, "役職");
         affiliation_index = get_column_index(line, "所属研究室");
-        first_slot_index = get_column_index(line, "[13:30~15:00]");
-        second_slot_index = get_column_index(line, "[15:15~16:45]");
+        first_slot_index = get_column_index(line, " [13:30~15:00]");
+        second_slot_index = get_column_index(line, " [15:15~16:45]");
     }
     while (std::getline(file, str_buf)) {
         auto line = get_line_split_by_c(str_buf, ',');
@@ -112,15 +112,14 @@ std::vector<Professor> concept_presentation_input(
 
 void concept_presentation_output(std::vector<std::vector<Slot>> schedule) {
     for (auto window : schedule) {
-        std::cout << "学籍番号, 氏名";
+        std::cout << "学籍番号";
         for (int i = 1; i < k + 1; i++) {
             std::cout << ", "
                       << "教員" << i;
         }
         std::cout << std::endl;
         for (auto s : window) {
-            std::cout << s.presenter.get_number() << ", "
-                      << s.presenter.get_name();
+            std::cout << s.presenter.get_number();
             for (auto a : s.assign_professors) {
                 std::cout << ", ";
                 std::cout << a;

@@ -7,10 +7,13 @@
 #include <random>
 #include <set>
 #include <vector>
+#include <iostream>
 
 #include "io.h"
 
 namespace research_project {
+
+int parallel;
 
 // スケジュールがvalidか判定
 bool validator(const std::vector<std::vector<Student>> &schedule) {
@@ -23,7 +26,8 @@ bool validator(const std::vector<std::vector<Student>> &schedule) {
         for (int a = 0; a < n; a++) {
             if (schedule[a][i].get_number() == "N/A") continue;
             for (int b = a + 1; b < n; b++) {
-                if (schedule[a][i].get_supervisor() !=
+                if(schedule[b][i].get_number() == "N/A") continue;
+                if (schedule[a][i].get_supervisor() ==
                     schedule[b][i].get_supervisor()) {
                     return false;
                 }
@@ -35,7 +39,6 @@ bool validator(const std::vector<std::vector<Student>> &schedule) {
 
 std::vector<std::vector<Student>> create_schedule(
     std::vector<Student> students) {
-    const int parallel = 8;
     std::vector<std::pair<std::string, std::vector<Student>>> remain;
     int sum = 0;
     {
@@ -87,7 +90,8 @@ std::vector<std::vector<Student>> create_schedule(
     return result;
 }
 
-void run(std::string filename) {
+void run(std::string filename, int parallel_) {
+    parallel = parallel_;
     auto [first, second] = research_project_input(filename);
     research_project_output(create_schedule(first));
     research_project_output(create_schedule(second));

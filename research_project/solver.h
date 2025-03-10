@@ -10,6 +10,6 @@ bool validator(const std::vector<std::vector<Student>>& schedule);
 
 std::vector<std::vector<Student>> create_schedule(std::vector<Student> students);
 
-void run(std::string filename);
+void run(std::string filename, int parallel_);
 
 }
