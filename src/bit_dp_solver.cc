@@ -29,6 +29,7 @@ int min_left(const Time &time_info, Professor professor, int now) {
         bool flag = true;
         for (int i = 0; auto student : professor.get_students()) {
             flag &= check(time_info, student, now + i);
+            if (!flag) break;
             i++;
         }
         if (flag) return now;
@@ -37,9 +38,12 @@ int min_left(const Time &time_info, Professor professor, int now) {
     return std::numeric_limits<int>::max();
 }
 
+#include <iostream>
+
 std::vector<Professor> bit_dp_solver(int start, int end, const Time &time_info,
                                      std::vector<Professor> professors) {
     const int n = (int)professors.size();
+    std::cerr << n << std::endl;
     const int INF = std::numeric_limits<int>::max();
     std::vector<int> dp(1 << n, INF);
     std::vector<int> memo(1 << n, -1);
@@ -53,6 +57,7 @@ std::vector<Professor> bit_dp_solver(int start, int end, const Time &time_info,
             if (r == INF) continue;
             int c = professors[i].get_students().size();
             r += c;
+            if (r > end) continue;
             if (r < dp[bit | (1 << i)]) {
                 dp[bit | (1 << i)] = r;
                 memo[bit | (1 << i)] = i;

@@ -48,7 +48,7 @@ void master_presentation_solver::run() {
                                        time_info, oookayama);
     auto oookayama_schedule = construct_schedule(
         time_info.accumulate_count_per_day[3],
-        time_info.accumulate_count_per_day[4], time_info, oookayama);
+        time_info.accumulate_count_per_day[4], time_info, oookayama_sol);
 
     auto schedule = suzukake_schedule;
     schedule.insert(schedule.end(), oookayama_schedule.begin(),

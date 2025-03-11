@@ -12,7 +12,8 @@ namespace master_presentation {
 
 void master_presentation_solver::professor_input(
     std::string professor_base_info_filename, std::string professor_filename) {
-    auto professor_base_info = professor_base_info_input(professor_base_info_filename);
+    auto professor_base_info =
+        professor_base_info_input(professor_base_info_filename);
 
     std::ifstream prof_file(professor_filename, std::ios::in);
     if (!prof_file) {
@@ -83,10 +84,11 @@ void master_presentation_solver::student_input(std::string student_filename) {
 
         assign_count[main_examiner]++;
 
-        auto itr =
-            std::find_if(professors_.begin(), professors_.end(),
-                         [&name](Professor p) { return p.get_name() == name; });
-
+        auto itr = std::find_if(professors_.begin(), professors_.end(),
+                                [&main_examiner](Professor p) {
+                                    return p.get_name() == main_examiner;
+                                });
+        assert(itr != professors_.end());
         std::string is_possible = itr->get_is_possible();
         std::vector<std::string> assign_professors = {main_examiner};
         for (auto index : deputy_examiner_index) {
@@ -102,13 +104,18 @@ void master_presentation_solver::student_input(std::string student_filename) {
                              [&deputy_name](Professor p) {
                                  return p.get_name() == deputy_name;
                              });
+            if (deputy_itr == professors_.end()) {
+                continue;
+            }
+            assert(deputy_itr != professors_.end());
             if (deputy_itr == professors_.end()) continue;
             auto s = deputy_itr->get_is_possible();
             for (int j = 0; j < (int)s.size(); j++) {
                 if (s[j] == 'x') is_possible[j] = 'x';
             }
         }
-        itr->add_student({student_number, name, main_examiner, is_possible, assign_professors});
+        itr->add_student({student_number, name, main_examiner, is_possible,
+                          assign_professors});
     }
 }
 
