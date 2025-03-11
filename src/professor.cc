@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "io_util.h"
 
@@ -71,6 +72,9 @@ std::vector<Professor> combined_professor_info(
                          [&p](Professor professor) {
                              return professor.get_name() == p.get_name();
                          });
+        if(itr == professor_base_info.end()) {
+            std::cerr << p.get_name() << "は教員情報にありません。表記ゆれなどを確認してください。" << std::endl;
+        }
         assert(itr != professor_base_info.end());
         itr->set_is_possible(p.get_is_possible());
         combined.emplace_back(*itr);

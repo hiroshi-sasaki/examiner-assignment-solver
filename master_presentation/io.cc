@@ -12,7 +12,7 @@ namespace master_presentation {
 
 void master_presentation_solver::professor_input(
     std::string professor_base_info_filename, std::string professor_filename) {
-    professors_ = professor_base_info_input(professor_base_info_filename);
+    auto professor_base_info = professor_base_info_input(professor_base_info_filename);
 
     std::ifstream prof_file(professor_filename, std::ios::in);
     if (!prof_file) {
@@ -32,6 +32,8 @@ void master_presentation_solver::professor_input(
         }
     }
 
+    std::vector<Professor> professors;
+
     while (std::getline(prof_file, str_buf)) {
         auto line = get_line_split_by_c(str_buf, ',');
         std::string name = line[professor_name_index];
@@ -44,13 +46,9 @@ void master_presentation_solver::professor_input(
                 is_possible += 'x';
             }
         }
-        for (auto &prof : professors_) {
-            if (prof.get_name() == name) {
-                prof.set_is_possible(is_possible);
-                break;
-            }
-        }
+        professors.emplace_back(name, is_possible);
     }
+    professors_ = combined_professor_info(professor_base_info, professors);
 }
 
 void master_presentation_solver::student_input(std::string student_filename) {
