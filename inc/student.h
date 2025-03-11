@@ -12,6 +12,8 @@ struct Student {
 
     std::vector<std::string> assign_professors;
 
+    std::string affiliation = "";
+
   public:
     std::string get_number() const;
     std::string get_name() const;
@@ -19,6 +21,9 @@ struct Student {
     std::string get_is_possible() const;
     std::vector<std::string> get_assign_professors() const;
     int assign_count() const;
+    std::string get_affiliation() const;
+
+    void set_affiliation(std::string);
 
     bool can_assign(int) const;
     bool valid() const;

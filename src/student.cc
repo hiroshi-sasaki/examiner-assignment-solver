@@ -46,6 +46,14 @@ int Student::assign_count() const {
     return assign_professors.size();
 }
 
+std::string Student::get_affiliation() const {
+    return affiliation;
+}
+
+void Student::set_affiliation(std::string affiliation_) {
+    affiliation = affiliation_;
+}
+
 bool Student::can_assign(int i) const {
     return is_possible[i] == 'o';
 }

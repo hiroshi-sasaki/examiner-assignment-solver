@@ -1,6 +1,13 @@
+
 #include "professor.h"
 
+#include <algorithm>
+#include <cassert>
+
 #include "io_util.h"
+
+Professor::Professor(std::string name_, std::string is_possible_)
+    : name(name_), is_possible(is_possible_) {}
 
 Professor::Professor(std::string name_, ProfessorType type_,
                      std::string is_possible_, std::string affiliation_)
@@ -50,5 +57,23 @@ void Professor::set_is_possible(std::string is_possible_) {
 }
 
 void Professor::add_student(Student student) {
+    student.set_affiliation(affiliation);
     insert_or_assign(students, student);
+}
+
+std::vector<Professor> combined_professor_info(
+    std::vector<Professor> professor_base_info,
+    std::vector<Professor> professors) {
+    std::vector<Professor> combined;
+    for (auto p : professors) {
+        auto itr =
+            std::find_if(professor_base_info.begin(), professor_base_info.end(),
+                         [&p](Professor professor) {
+                             return professor.get_name() == p.get_name();
+                         });
+        assert(itr != professor_base_info.end());
+        itr->set_is_possible(p.get_is_possible());
+        combined.emplace_back(*itr);
+    }
+    return combined;
 }

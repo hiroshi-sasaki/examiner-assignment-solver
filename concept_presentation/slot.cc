@@ -16,7 +16,7 @@ Slot::Slot(Student presenter_, Professor professor, bool can_assign_prof) : pres
 
 bool Slot::can_assign(std::string name, std::string affiliation) const {
     if ((k == 3 && presenter.get_supervisor() == name) ||
-        (name != affiliation && affiliation == presenter.get_supervisor()) ||
+        (name != affiliation && affiliation == presenter.get_affiliation()) ||
         (int)assign_professors.size() >= k)
         return false;
     for(auto s: assign_professors) {

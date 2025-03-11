@@ -21,6 +21,7 @@ struct Professor {
     std::string affiliation = "";
 
   public:
+    Professor(std::string, std::string);
     // 構想発表用
     Professor(std::string, ProfessorType, std::string, std::string);
     // 教員情報のファイルからの読み出し
@@ -42,3 +43,5 @@ struct Professor {
       return name == rhs.name;
     }
 };
+
+std::vector<Professor> combined_professor_info(std::vector<Professor>, std::vector<Professor>);

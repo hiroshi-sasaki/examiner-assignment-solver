@@ -12,36 +12,24 @@ namespace concept_presentation {
 
 extern int k;
 
-std::vector<Professor> professor_input(std::string professor_filename) {
+std::vector<Professor> professor_input(std::string professor_base_info_filename, std::string professor_filename) {
+    auto professor_base_info = professor_base_info_input(professor_base_info_filename);
+
     std::ifstream file(professor_filename, std::ios::in);
     std::string str_buf;
     std::vector<Professor> professors;
     std::getline(file, str_buf);
-    int name_index, work_position_index, affiliation_index, first_slot_index,
+    int name_index, first_slot_index,
         second_slot_index;
     {
         auto line = get_line_split_by_c(str_buf, ',');
         name_index = get_column_index(line, "ご自身のお名前をお選びください");
-        work_position_index = get_column_index(line, "役職");
-        affiliation_index = get_column_index(line, "所属研究室");
         first_slot_index = get_column_index(line, " [13:30~15:00]");
         second_slot_index = get_column_index(line, " [15:15~16:45]");
     }
     while (std::getline(file, str_buf)) {
         auto line = get_line_split_by_c(str_buf, ',');
         std::string name = line[name_index];
-
-        ProfessorType type;
-        if (line[work_position_index] == "教授") {
-            type = ProfessorType::professor;
-        } else if (line[work_position_index] == "准教授") {
-            type = ProfessorType::associate;
-        } else if (line[work_position_index] == "助教") {
-            type = ProfessorType::assistant;
-        } else {
-            std::cerr << line[work_position_index] << std::endl;
-            assert(0);
-        }
 
         std::string is_possible = "";
         if (line[first_slot_index].ends_with("OK"))
@@ -53,11 +41,9 @@ std::vector<Professor> professor_input(std::string professor_filename) {
         else
             is_possible += 'x';
 
-        std::string affiliation = line[affiliation_index];
-
-        insert_or_assign(professors, {name, type, is_possible, affiliation});
+        insert_or_assign(professors, {name, is_possible});
     }
-    return professors;
+    return combined_professor_info(professor_base_info, professors);
 }
 
 std::vector<Student> student_input(std::string student_filename) {
@@ -95,9 +81,9 @@ std::vector<Student> student_input(std::string student_filename) {
     return students;
 }
 
-std::vector<Professor> concept_presentation_input(
+std::vector<Professor> concept_presentation_input(std::string professor_base_info_filename,
     std::string professor_filename, std::string student_filename) {
-    auto professors = professor_input(professor_filename);
+    auto professors = professor_input(professor_base_info_filename, professor_filename);
     auto students = student_input(student_filename);
 
     for (auto student : students) {
