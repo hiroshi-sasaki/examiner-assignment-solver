@@ -51,7 +51,7 @@ std::vector<Student> student_input(std::string student_filename) {
     std::string str_buf, str_conma_buf;
     std::vector<Student> students;
     std::getline(file, str_buf);
-    int student_number_index, student_name_index, supervisor_name_index,
+    int student_number_index, supervisor_name_index,
         other_index;
     {
         auto line = get_line_split_by_c(str_buf, ',');
@@ -59,7 +59,6 @@ std::vector<Student> student_input(std::string student_filename) {
         // ファイルの対象の行によって変更
         student_number_index =
             get_column_index(line, "学籍番号／Student ID  No.");
-        student_name_index = get_column_index(line, "氏名／Name");
         supervisor_name_index =
             get_column_index(line,
                              "主指導教員を選んでください／Choose your main "
@@ -69,14 +68,13 @@ std::vector<Student> student_input(std::string student_filename) {
     while (std::getline(file, str_buf)) {
         auto line = get_line_split_by_c(str_buf, ',');
         std::string number = line[student_number_index];
-        std::string name = line[student_name_index];
         std::string supervisor = line[supervisor_name_index];
         std::string is_possible = "oo";
         if (line[other_index] == "1")
             is_possible[1] = 'x';
         else if (line[other_index] == "2")
             is_possible[0] = 'x';
-        insert_or_assign(students, {number, name, supervisor, is_possible});
+        insert_or_assign(students, {number, "", supervisor, is_possible});
     }
     return students;
 }
