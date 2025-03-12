@@ -18,7 +18,7 @@ int get_column_index(const std::vector<std::string> &row, std::string target) {
         std::find_if(std::begin(row), std::end(row),
                      [target](std::string s) -> bool { return s == target; });
     if (itr == row.end()) {
-        std::cerr << target << "は存在しません" << std::endl;
+        std::cerr << target << "という列は存在しません" << std::endl;
         assert(0);
     }
     return std::distance(std::begin(row), itr);
@@ -46,8 +46,15 @@ Time time_info_input(std::string filename) {
     {
         std::getline(file, str_buf);
         auto line = get_line_split_by_c(str_buf, ' ');
-        time.day = std::stoi(line[0]);
-        time.section = std::stoi(line[1]);
+        if (line.size() == 2) {
+            time.day = std::stoi(line[0]);
+            time.section = std::stoi(line[1]);
+        } else {
+            time.suzukake_day_count = std::stoi(line[0]);
+            time.oookayama_day_count = std::stoi(line[1]);
+            time.section = std::stoi(line[2]);
+            time.day = time.suzukake_day_count + time.oookayama_day_count;
+        }
     }
     {
         std::getline(file, str_buf);
@@ -61,6 +68,7 @@ Time time_info_input(std::string filename) {
         std::getline(file, str_buf);
         time.time_window_label = get_line_split_by_c(str_buf, ',');
     }
+    assert(time.time_window_label.size() == time.day * time.section);
     time.init();
     return time;
 }
