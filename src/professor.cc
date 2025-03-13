@@ -82,11 +82,6 @@ std::vector<Professor> combined_professor_info(
             std::find_if(professor_base_info.begin(), professor_base_info.end(),
                          [&p](Professor professor) { return professor == p; });
         if (itr == professor_base_info.end()) {
-            for (auto prof : professor_base_info) {
-                std::cerr << p.get_name() << " " << prof.get_name() << " "
-                          << prof.is_same_name(p.get_name()) << " "
-                          << (prof == p) << std::endl;
-            }
             std::cerr
                 << p.get_name()
                 << "は教員情報にありません。表記ゆれなどを確認してください。"
