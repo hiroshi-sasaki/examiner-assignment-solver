@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <iostream>
 #include <vector>
 
 #include "student.h"
@@ -20,12 +21,12 @@ struct Professor {
     std::string is_possible = "";
     std::string affiliation = "";
 
+    std::vector<std::string> alias;
+
   public:
     Professor(std::string, std::string);
-    // 構想発表用
-    Professor(std::string, ProfessorType, std::string, std::string);
     // 教員情報のファイルからの読み出し
-    Professor(std::string, std::string, ProfessorType, std::string);
+    Professor(std::string, std::string, ProfessorType, std::string, std::vector<std::string>);
     std::string get_name() const;
     std::string get_campus() const;
     std::vector<Student> get_students() const;
@@ -34,13 +35,23 @@ struct Professor {
     std::string get_is_possible() const;
     std::string get_affiliation() const;
 
+    std::vector<std::string> get_alias() const;
+    bool is_same_name(std::string) const;
+
+
     void set_is_possible(std::string);
     void add_student(Student);
 
     bool can_assign(int) const;
 
     bool operator==(const Professor &rhs) const {
-      return name == rhs.name;
+      for(auto s: rhs.get_alias()) {
+        if(is_same_name(s)) return true;
+      }
+      for(auto s: get_alias()) {
+        if(rhs.is_same_name(s)) return true;
+      }
+      return false;
     }
 };
 

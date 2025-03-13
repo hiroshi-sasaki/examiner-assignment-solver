@@ -5,6 +5,7 @@
 #include <vector>
 
 struct Professor;
+struct Student;
 struct Time;
 
 int get_column_index(const std::vector<std::string> &row, std::string target);
@@ -24,3 +25,5 @@ template <class T> void insert_or_assign(std::vector<T> &a, T x) {
     }
     a.emplace_back(x);
 }
+
+void output_schedule(std::vector<Student>, Time);

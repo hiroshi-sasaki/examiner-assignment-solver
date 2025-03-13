@@ -23,6 +23,7 @@ struct Student {
     int assign_count() const;
     std::string get_affiliation() const;
 
+    void set_supervisor(std::string);
     void set_affiliation(std::string);
 
     bool can_assign(int) const;
