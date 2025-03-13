@@ -48,7 +48,13 @@ Time time_info_input(std::string filename) {
     {
         std::getline(file, str_buf);
         auto line = get_line_split_by_c(str_buf, ' ');
-        if (line.size() == 2) {
+        if(line.size() == 1) {
+            time.section = std::stoi(line[0]);
+            std::getline(file, str_buf);
+            time.time_window_label = get_line_split_by_c(str_buf, ',');
+            return time;
+        }
+        else if (line.size() == 2) {
             time.day = std::stoi(line[0]);
             time.section = std::stoi(line[1]);
         } else {

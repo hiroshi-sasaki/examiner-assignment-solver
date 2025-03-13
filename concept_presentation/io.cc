@@ -12,34 +12,37 @@ namespace concept_presentation {
 
 extern int k;
 
-std::vector<Professor> professor_input(std::string professor_base_info_filename, std::string professor_filename) {
-    auto professor_base_info = professor_base_info_input(professor_base_info_filename);
+std::vector<Professor> professor_input(Time time_info,
+                                       std::string professor_base_info_filename,
+                                       std::string professor_filename) {
+    auto professor_base_info =
+        professor_base_info_input(professor_base_info_filename);
 
     std::ifstream file(professor_filename, std::ios::in);
     std::string str_buf;
     std::vector<Professor> professors;
     std::getline(file, str_buf);
-    int name_index, first_slot_index,
-        second_slot_index;
+    int name_index;
+    std::vector<int> time_window_index;
     {
         auto line = get_line_split_by_c(str_buf, ',');
         name_index = get_column_index(line, "ご自身のお名前をお選びください");
-        first_slot_index = get_column_index(line, " [13:30~15:00]");
-        second_slot_index = get_column_index(line, " [15:15~16:45]");
+        for (auto label : time_info.time_window_label) {
+            time_window_index.emplace_back(get_column_index(line, label));
+        }
     }
     while (std::getline(file, str_buf)) {
         auto line = get_line_split_by_c(str_buf, ',');
         std::string name = line[name_index];
 
         std::string is_possible = "";
-        if (line[first_slot_index].ends_with("OK"))
-            is_possible += 'o';
-        else
-            is_possible += 'x';
-        if (line[second_slot_index].ends_with("OK"))
-            is_possible += 'o';
-        else
-            is_possible += 'x';
+        for (auto index : time_window_index) {
+            if (line[index].ends_with("OK")) {
+                is_possible += 'o';
+            } else {
+                is_possible += 'x';
+            }
+        }
 
         insert_or_assign(professors, {name, is_possible});
     }
@@ -51,8 +54,7 @@ std::vector<Student> student_input(std::string student_filename) {
     std::string str_buf, str_conma_buf;
     std::vector<Student> students;
     std::getline(file, str_buf);
-    int student_number_index, supervisor_name_index,
-        other_index;
+    int student_number_index, supervisor_name_index, other_index;
     {
         auto line = get_line_split_by_c(str_buf, ',');
 
@@ -79,9 +81,13 @@ std::vector<Student> student_input(std::string student_filename) {
     return students;
 }
 
-std::vector<Professor> concept_presentation_input(std::string professor_base_info_filename,
+std::vector<Professor> concept_presentation_input(
+    std::string time_filename, std::string professor_base_info_filename,
     std::string professor_filename, std::string student_filename) {
-    auto professors = professor_input(professor_base_info_filename, professor_filename);
+    Time time_info = time_info_input(time_filename);
+    k = time_info.section;
+    auto professors = professor_input(time_info, professor_base_info_filename,
+                                      professor_filename);
     auto students = student_input(student_filename);
 
     for (auto student : students) {

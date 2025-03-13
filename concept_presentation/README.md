@@ -2,15 +2,27 @@
 
 ## 使用方法
 
-コマンド引数の第 1 引数には `concept_presentation` 、第 2 引数には教員の基本情報の入ったCSVファイル名、第 3 引数には教員のスケジュールが入ったCSVファイル名、第 4 引数には学生の情報の入ったCSVファイル名を与える。
+コマンド引数の第 1 引数には `concept_presentation` 、第 2 引数は時間の情報の入ったファイル名、第 3 引数には教員の基本情報の入ったCSVファイル名、第 4 引数には教員のスケジュールが入ったCSVファイル名、第 5 引数には学生の情報の入ったCSVファイル名を与える。
 
 以下に例をあげる。ファイル名はそれぞれ `professor_base_info.csv`, `professor.csv`, `student.csv` としている。
 
 ```
-$ ./build/solver concept_presentation professor_base_info.csv professor.csv student.csv
+$ ./build/solver concept_presentation time.txt professor_base_info.csv professor.csv student.csv
 ```
 
-## CSVの中身
+## 入力の中身
+
+時間の情報の入ったファイルは以下のような構成である。
+
+```
+審査員数
+1枠目のラベル名,2枠目のラベル名
+```
+
+```
+3
+1枠目,2枠目
+```
 
 以下のようなフォーマットのCSV形式で与える。
 

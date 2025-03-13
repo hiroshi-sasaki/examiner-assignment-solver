@@ -327,10 +327,9 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
     return plan;
 }
 
-void run(std::string professor_base_info_filename, std::string professor_filename, std::string student_filename, int assign_count) {
-    k = assign_count;
+void run(std::string time_filename, std::string professor_base_info_filename, std::string professor_filename, std::string student_filename) {
     auto professors =
-        concept_presentation_input(professor_base_info_filename, professor_filename, student_filename);
+        concept_presentation_input(time_filename, professor_base_info_filename, professor_filename, student_filename);
     auto plan = concept_presentation_assignment_solver(professors);
     concept_presentation_output(plan);
 }
