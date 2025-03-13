@@ -12,14 +12,14 @@ namespace intermediate_presentation {
 
 struct intermediate_presentation_solver {
   private:
-    void professor_input(std::string);
+    void professor_input(std::string, std::string);
     void student_input(std::string);
-    void input(std::string, std::string, std::string);
+    void input(std::string, std::string, std::string, std::string);
 
     void professor_assign(std::vector<Student>&);
 
   public:
-    intermediate_presentation_solver(std::string, std::string, std::string);
+    intermediate_presentation_solver(std::string, std::string, std::string, std::string);
 
     void run();
 

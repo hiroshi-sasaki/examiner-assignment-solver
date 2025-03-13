@@ -8,9 +8,9 @@
 namespace intermediate_presentation {
 
 intermediate_presentation_solver::intermediate_presentation_solver(
-    std::string time_filename, std::string professor_filename,
+    std::string time_filename, std::string professor_base_info_filename, std::string professor_filename,
     std::string student_filename) {
-    input(time_filename, professor_filename, student_filename);
+    input(time_filename, professor_base_info_filename, professor_filename, student_filename);
 }
 
 void intermediate_presentation_solver::professor_assign(
@@ -29,7 +29,7 @@ void intermediate_presentation_solver::professor_assign(
             if (professor == name) return false;
         }
         for (auto prof : professors) {
-            if (prof.get_name() == name) {
+            if (prof.is_same_name(name)) {
                 return check(time_info, prof, i);
             }
         }
@@ -38,7 +38,7 @@ void intermediate_presentation_solver::professor_assign(
 
     auto validator = [&]() -> bool {
         for (auto student : schedule) {
-            if (student.get_name() == "N/A") continue;
+            if (!student.valid()) continue;
             if (student.get_assign_professors().size() < k) {
                 return false;
             }

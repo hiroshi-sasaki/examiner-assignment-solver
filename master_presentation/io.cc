@@ -82,13 +82,14 @@ void master_presentation_solver::student_input(std::string student_filename) {
         std::string name = line[student_name_index];
         std::string main_examiner = line[main_examiner_index];
 
-        assign_count[main_examiner]++;
-
         auto itr = std::find_if(professors_.begin(), professors_.end(),
                                 [&main_examiner](Professor p) {
-                                    return p.get_name() == main_examiner;
+                                    return p.is_same_name(main_examiner);
                                 });
         assert(itr != professors_.end());
+        main_examiner = itr->get_name();
+        assign_count[main_examiner]++;
+
         std::string is_possible = itr->get_is_possible();
         std::vector<std::string> assign_professors = {main_examiner};
         for (auto index : deputy_examiner_index) {
@@ -96,19 +97,18 @@ void master_presentation_solver::student_input(std::string student_filename) {
             std::string deputy_name = line[index];
             if (deputy_name.empty()) continue;
 
-            assign_professors.emplace_back(deputy_name);
-            assign_count[deputy_name]++;
-
             auto deputy_itr =
                 std::find_if(professors_.begin(), professors_.end(),
                              [&deputy_name](Professor p) {
-                                 return p.get_name() == deputy_name;
+                                 return p.is_same_name(deputy_name);
                              });
             if (deputy_itr == professors_.end()) {
                 continue;
             }
             assert(deputy_itr != professors_.end());
-            if (deputy_itr == professors_.end()) continue;
+            deputy_name = deputy_itr->get_name();
+            assign_professors.emplace_back(deputy_name);
+            assign_count[deputy_name]++;
             auto s = deputy_itr->get_is_possible();
             for (int j = 0; j < (int)s.size(); j++) {
                 if (s[j] == 'x') is_possible[j] = 'x';

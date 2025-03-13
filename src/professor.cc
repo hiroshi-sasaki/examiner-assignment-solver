@@ -8,18 +8,18 @@
 #include "io_util.h"
 
 Professor::Professor(std::string name_, std::string is_possible_)
-    : name(name_), is_possible(is_possible_) {}
-
-Professor::Professor(std::string name_, ProfessorType type_,
-                     std::string is_possible_, std::string affiliation_)
-    : name(name_),
-      type(type_),
-      is_possible(is_possible_),
-      affiliation(affiliation_) {}
+    : name(name_), is_possible(is_possible_) {
+    alias.emplace_back(name);
+}
 
 Professor::Professor(std::string name_, std::string campus_,
-                     ProfessorType type_, std::string affiliation_)
-    : name(name_), campus(campus_), type(type_), affiliation(affiliation_) {}
+                     ProfessorType type_, std::string affiliation_,
+                     std::vector<std::string> alias_)
+    : name(name_),
+      campus(campus_),
+      type(type_),
+      affiliation(affiliation_),
+      alias(alias_) {}
 
 std::string Professor::get_campus() const {
     return campus;
@@ -49,6 +49,17 @@ std::string Professor::get_affiliation() const {
     return affiliation;
 }
 
+std::vector<std::string> Professor::get_alias() const {
+    return alias;
+}
+
+bool Professor::is_same_name(std::string s) const {
+    for (auto a : alias) {
+        if (a == s) return true;
+    }
+    return false;
+}
+
 bool Professor::can_assign(int i) const {
     return is_possible[i] == 'o';
 }
@@ -69,11 +80,17 @@ std::vector<Professor> combined_professor_info(
     for (auto p : professors) {
         auto itr =
             std::find_if(professor_base_info.begin(), professor_base_info.end(),
-                         [&p](Professor professor) {
-                             return professor.get_name() == p.get_name();
-                         });
-        if(itr == professor_base_info.end()) {
-            std::cerr << p.get_name() << "は教員情報にありません。表記ゆれなどを確認してください。" << std::endl;
+                         [&p](Professor professor) { return professor == p; });
+        if (itr == professor_base_info.end()) {
+            for (auto prof : professor_base_info) {
+                std::cerr << p.get_name() << " " << prof.get_name() << " "
+                          << prof.is_same_name(p.get_name()) << " "
+                          << (prof == p) << std::endl;
+            }
+            std::cerr
+                << p.get_name()
+                << "は教員情報にありません。表記ゆれなどを確認してください。"
+                << std::endl;
         }
         assert(itr != professor_base_info.end());
         itr->set_is_possible(p.get_is_possible());

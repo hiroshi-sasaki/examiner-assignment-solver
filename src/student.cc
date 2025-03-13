@@ -50,6 +50,10 @@ std::string Student::get_affiliation() const {
     return affiliation;
 }
 
+void Student::set_supervisor(std::string supervisor_) {
+    supervisor = supervisor_;
+}
+
 void Student::set_affiliation(std::string affiliation_) {
     affiliation = affiliation_;
 }

@@ -47,7 +47,7 @@ void bachelor_presentation_solver::professor_assign(
             if (professor == name) return false;
         }
         for (auto prof : professors) {
-            if (prof.get_name() == name) {
+            if (prof.is_same_name(name)) {
                 return check(time_info, prof, i);
             }
         }

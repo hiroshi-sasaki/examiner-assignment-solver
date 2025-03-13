@@ -11,7 +11,9 @@
 namespace intermediate_presentation {
 
 void intermediate_presentation_solver::professor_input(
-    std::string professor_filename) {
+    std::string professor_base_info_filename, std::string professor_filename) {
+    auto professor_base_info =
+        professor_base_info_input(professor_base_info_filename);
     std::ifstream prof_file(professor_filename, std::ios::in);
     if (!prof_file) {
         std::cerr << "cannot open file: " << professor_filename << std::endl;
@@ -30,6 +32,8 @@ void intermediate_presentation_solver::professor_input(
         }
     }
 
+    std::vector<Professor> professors;
+
     while (std::getline(prof_file, str_buf)) {
         auto line = get_line_split_by_c(str_buf, ',');
         std::string name = line[professor_name_index];
@@ -42,8 +46,9 @@ void intermediate_presentation_solver::professor_input(
                 is_possible += 'x';
             }
         }
-        professors_.emplace_back(name, is_possible);
+        professors.emplace_back(name, is_possible);
     }
+    professors_ = combined_professor_info(professor_base_info, professors);
 }
 
 void intermediate_presentation_solver::student_input(
@@ -74,18 +79,19 @@ void intermediate_presentation_solver::student_input(
 
         auto itr = std::find_if(
             professors_.begin(), professors_.end(),
-            [&supervisor](Professor p) { return p.get_name() == supervisor; });
+            [&supervisor](Professor p) { return p.is_same_name(supervisor); });
         assert(itr != professors_.end());
+        supervisor = itr->get_name();
         itr->add_student({number, name, supervisor, itr->get_is_possible()});
         assign_count[supervisor]++;
     }
 }
 
-void intermediate_presentation_solver::input(std::string time_filename,
-                                             std::string professor_filename,
-                                             std::string student_filename) {
+void intermediate_presentation_solver::input(
+    std::string time_filename, std::string professor_base_info_filename,
+    std::string professor_filename, std::string student_filename) {
     time_info = time_info_input(time_filename);
-    professor_input(professor_filename);
+    professor_input(professor_base_info_filename, professor_filename);
     student_input(student_filename);
 }
 

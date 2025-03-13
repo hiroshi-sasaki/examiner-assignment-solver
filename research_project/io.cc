@@ -11,12 +11,6 @@
 
 namespace research_project {
 
-std::ostream &operator<<(std::ostream &os, const Student &student) {
-    os << student.get_number() << ", " << student.get_name() << ", "
-       << student.get_supervisor();
-    return os;
-}
-
 std::pair<std::vector<Student>, std::vector<Student>> research_project_input(
     std::string student_filename) {
     std::ifstream file(student_filename, std::ios::in);
@@ -45,10 +39,12 @@ std::pair<std::vector<Student>, std::vector<Student>> research_project_input(
 }
 
 void research_project_output(const std::vector<std::vector<Student>> &result) {
-    std::cout << "枠番号, 学籍番号, 名前, フリガナ, 教員" << std::endl;
+    std::cout << "枠番号,学籍番号,名前,教員" << std::endl;
     for (auto slot : result) {
         for (int i = 1; auto student : slot) {
-            std::cout << i << ", " << student << std::endl;
+            std::cout << i << ", " << student.get_number() << " "
+                      << student.get_name() << " " << student.get_supervisor()
+                      << std::endl;
             i++;
         }
         std::cout << std::endl;

@@ -86,7 +86,8 @@ std::vector<Professor> concept_presentation_input(std::string professor_base_inf
 
     for (auto student : students) {
         for (auto &professor : professors) {
-            if (professor.get_name() == student.get_supervisor()) {
+            if (professor.is_same_name(student.get_supervisor())) {
+                student.set_supervisor(professor.get_name());
                 professor.add_student(student);
             }
         }

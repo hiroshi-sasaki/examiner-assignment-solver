@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <ranges>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -79,13 +80,15 @@ std::vector<Professor> professor_base_info_input(std::string filename) {
     std::string str_buf;
     std::vector<Professor> professors;
     std::getline(file, str_buf);
-    int name_index, campus_index, work_position_index, affiliation_index;
+    int name_index, campus_index, work_position_index, affiliation_index,
+        alias_index;
     {
         auto line = get_line_split_by_c(str_buf, ',');
         name_index = get_column_index(line, "氏名");
         campus_index = get_column_index(line, "キャンパス");
         work_position_index = get_column_index(line, "役職");
         affiliation_index = get_column_index(line, "所属研究室");
+        alias_index = get_column_index(line, "別表記");
     }
     while (std::getline(file, str_buf)) {
         auto line = get_line_split_by_c(str_buf, ',');
@@ -106,7 +109,12 @@ std::vector<Professor> professor_base_info_input(std::string filename) {
 
         std::string affiliation = line[affiliation_index];
 
-        insert_or_assign(professors, {name, campus, type, affiliation});
+        std::vector<std::string> alias = {name};
+        for (auto s : line | std::views::drop(alias_index)) {
+            alias.emplace_back(s);
+        }
+
+        insert_or_assign(professors, {name, campus, type, affiliation, alias});
     }
     return professors;
 }
