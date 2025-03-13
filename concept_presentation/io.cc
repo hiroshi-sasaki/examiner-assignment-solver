@@ -51,7 +51,7 @@ std::vector<Professor> professor_input(Time time_info,
 
 std::vector<Student> student_input(std::string student_filename) {
     std::ifstream file(student_filename, std::ios::in);
-    std::string str_buf, str_conma_buf;
+    std::string str_buf;
     std::vector<Student> students;
     std::getline(file, str_buf);
     int student_number_index, supervisor_name_index, other_index;
