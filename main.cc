@@ -49,4 +49,7 @@ int main(int argc, char *argv[]) {
             student_filename);
         solver.run();
     }
+    else {
+        std::cerr << event << "というイベントはありません" << std::endl;
+    }
 }
