@@ -47,12 +47,12 @@ C,OK,OK,...,OK
 
 | 列名 | 説明 |
 | ---- | ---- |
-| 学籍番号 | 学籍番号 |
-| 氏名 | 学生の氏名 |
-| 主指導教員を選んでください。 | 指導教員名 |
+| 学籍番号／Student ID  No. | 学籍番号 |
+| 氏名／Name | 学生の氏名 |
+| 主指導教員を選んでください／Choose your main academic supervisor. | 指導教員名 |
 
 ```
-学籍番号,氏名,主指導教員を選んでください。
+学籍番号／Student ID  No.,氏名／Name,主指導教員を選んでください／Choose your main academic supervisor.
 1,X,A
 2,Y,B
 3,Z,C
