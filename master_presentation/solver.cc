@@ -3,7 +3,7 @@
 #include <cassert>
 
 #include "bit_dp_solver.h"
-
+#include "io_util.h"
 namespace master_presentation {
 
 master_presentation_solver::master_presentation_solver(
@@ -57,6 +57,7 @@ void master_presentation_solver::run() {
     auto schedule = suzukake_schedule;
     schedule.insert(schedule.end(), oookayama_schedule.begin(),
                     oookayama_schedule.end());
+    output_schedule(schedule, time_info);
 }
 
 }  // namespace master_presentation

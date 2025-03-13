@@ -11,10 +11,7 @@
 namespace intermediate_presentation {
 
 void intermediate_presentation_solver::professor_input(
-    std::string professor_base_info_filename, std::string professor_filename) {
-    auto professor_base_info =
-        professor_base_info_input(professor_base_info_filename);
-
+    std::string professor_filename) {
     std::ifstream prof_file(professor_filename, std::ios::in);
     if (!prof_file) {
         std::cerr << "cannot open file: " << professor_filename << std::endl;
@@ -33,8 +30,6 @@ void intermediate_presentation_solver::professor_input(
         }
     }
 
-    std::vector<Professor> professors;
-
     while (std::getline(prof_file, str_buf)) {
         auto line = get_line_split_by_c(str_buf, ',');
         std::string name = line[professor_name_index];
@@ -47,10 +42,8 @@ void intermediate_presentation_solver::professor_input(
                 is_possible += 'x';
             }
         }
-        professors.emplace_back(name, is_possible);
+        professors_.emplace_back(name, is_possible);
     }
-
-    professors_ = combined_professor_info(professor_base_info, professors);
 }
 
 void intermediate_presentation_solver::student_input(
@@ -65,10 +58,12 @@ void intermediate_presentation_solver::student_input(
     int student_number_index, student_name_index, supervisor_index;
     {
         auto line = get_line_split_by_c(str_buf, ',');
-        student_number_index = get_column_index(line, "学籍番号");
-        student_name_index = get_column_index(line, "氏名");
-        supervisor_index =
-            get_column_index(line, "主指導教員を選んでください。");
+        student_number_index =
+            get_column_index(line, "学籍番号／Student ID  No.");
+        student_name_index = get_column_index(line, "氏名／Name");
+        supervisor_index = get_column_index(line,
+                                            "主指導教員を選んでください／Choose"
+                                            " your main academic supervisor.");
     }
 
     while (std::getline(student_file, str_buf)) {
@@ -77,20 +72,20 @@ void intermediate_presentation_solver::student_input(
         std::string name = line[student_name_index];
         std::string supervisor = line[supervisor_index];
 
-        auto itr =
-            std::find_if(professors_.begin(), professors_.end(),
-                         [&name](Professor p) { return p.get_name() == name; });
+        auto itr = std::find_if(
+            professors_.begin(), professors_.end(),
+            [&supervisor](Professor p) { return p.get_name() == supervisor; });
         assert(itr != professors_.end());
         itr->add_student({number, name, supervisor, itr->get_is_possible()});
         assign_count[supervisor]++;
     }
 }
 
-void intermediate_presentation_solver::input(
-    std::string time_filename, std::string professor_base_info_filename,
-    std::string professor_filename, std::string student_filename) {
+void intermediate_presentation_solver::input(std::string time_filename,
+                                             std::string professor_filename,
+                                             std::string student_filename) {
     time_info = time_info_input(time_filename);
-    professor_input(professor_base_info_filename, professor_filename);
+    professor_input(professor_filename);
     student_input(student_filename);
 }
 

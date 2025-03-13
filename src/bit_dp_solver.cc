@@ -40,6 +40,14 @@ int min_left(const Time &time_info, Professor professor, int now) {
 
 std::vector<Professor> bit_dp_solver(int start, int end, const Time &time_info,
                                      std::vector<Professor> professors) {
+    {
+        std::vector<Professor> target;
+        for (auto p : professors) {
+            if (p.get_students().empty()) continue;
+            target.emplace_back(p);
+        }
+        std::swap(professors, target);
+    }
     const int n = (int)professors.size();
     const int INF = std::numeric_limits<int>::max();
     std::vector<int> dp(1 << n, INF);

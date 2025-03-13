@@ -4,6 +4,7 @@
 #include <cassert>
 
 #include "bit_dp_solver.h"
+#include "io_util.h"
 #include "student.h"
 
 namespace bachelor_presentation {
@@ -54,13 +55,13 @@ void bachelor_presentation_solver::professor_assign(
     };
     auto validator = [&]() -> bool {
         for (auto student : suzukake_schedule) {
-            if (student.get_name() == "N/A") continue;
+            if (!student.valid()) continue;
             if (student.assign_count() < k) {
                 return false;
             }
         }
         for (auto student : oookayama_schedule) {
-            if (student.get_name() == "N/A") continue;
+            if (!student.valid()) continue;
             if (student.assign_count() < k) {
                 return false;
             }
@@ -129,6 +130,10 @@ void bachelor_presentation_solver::run() {
         time_info.accumulate_count_per_day[1],
         time_info.accumulate_count_per_day[2], time_info, oookayama_sol);
     professor_assign(suzukake_schedule, oookayama_schedule);
+    auto schedule = suzukake_schedule;
+    schedule.insert(schedule.end(), oookayama_schedule.begin(),
+                    oookayama_schedule.end());
+    output_schedule(schedule, time_info);
 }
 
 }  // namespace bachelor_presentation

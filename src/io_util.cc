@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "professor.h"
+#include "student.h"
 #include "time.h"
 
 int get_column_index(const std::vector<std::string> &row, std::string target) {
@@ -108,4 +109,26 @@ std::vector<Professor> professor_base_info_input(std::string filename) {
         insert_or_assign(professors, {name, campus, type, affiliation});
     }
     return professors;
+}
+
+void output_schedule(std::vector<Student> schedule, Time time_info) {
+    std::cerr << schedule.size() << std::endl;
+    assert(schedule.size() == time_info.accumulate.back());
+    std::cout << "発表番号,学籍番号,氏名,審査員" << std::endl;
+    for (int i = 0; i < time_info.day * time_info.section; i++) {
+        std::cout << time_info.time_window_label[i] << std::endl;
+        for (int j = 0; j < time_info.time[i]; j++) {
+            int index = time_info.accumulate[i] + j;
+            if (schedule[index].valid()) {
+                std::cout << index + 1 << "," << schedule[index].get_number()
+                          << "," << schedule[index].get_name();
+                for (auto professor : schedule[index].get_assign_professors()) {
+                    std::cout << "," << professor;
+                }
+                std::cout << std::endl;
+            } else {
+                std::cout << "空き" << std::endl;
+            }
+        }
+    }
 }

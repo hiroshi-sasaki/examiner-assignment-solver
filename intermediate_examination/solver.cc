@@ -1,33 +1,47 @@
 #include "solver.h"
 
 #include <algorithm>
+#include <iostream>
 
 #include "bit_dp_solver.h"
-
+#include "io_util.h"
 namespace intermediate_presentation {
+
+intermediate_presentation_solver::intermediate_presentation_solver(
+    std::string time_filename, std::string professor_filename,
+    std::string student_filename) {
+    input(time_filename, professor_filename, student_filename);
+}
 
 void intermediate_presentation_solver::professor_assign(
     std::vector<Student> &schedule) {
     auto professors = professors_;
+    for (auto &student : schedule) {
+        if (!student.valid()) continue;
+        assign_count[student.get_supervisor()]++;
+        student.assign_professor(student.get_supervisor());
+    }
     auto can_assign = [&](int i, std::string name) -> bool {
         auto student = schedule[i];
-        if (student.get_assign_professors().size() == k ||
-            student.get_name() == "N/A")
+        if (!student.valid() || student.get_assign_professors().size() == k)
             return false;
         for (auto professor : student.get_assign_professors()) {
             if (professor == name) return false;
         }
         for (auto prof : professors) {
             if (prof.get_name() == name) {
-                return prof.can_assign(i);
+                return check(time_info, prof, i);
             }
         }
         return false;
     };
+
     auto validator = [&]() -> bool {
         for (auto student : schedule) {
             if (student.get_name() == "N/A") continue;
-            if (student.get_assign_professors().size() < k) return false;
+            if (student.get_assign_professors().size() < k) {
+                return false;
+            }
         }
         return true;
     };
@@ -59,6 +73,7 @@ void intermediate_presentation_solver::run() {
     auto schedule = construct_schedule(
         0, time_info.accumulate_count_per_day.back(), time_info, sol);
     professor_assign(schedule);
+    output_schedule(schedule, time_info);
 }
 
 }  // namespace intermediate_presentation
