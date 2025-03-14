@@ -1,29 +1,21 @@
-#pragma once
+#include "io.h"
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <vector>
 
-#include "../util/io_util.hpp"
-#include "user.hpp"
+#include "io.h"
+#include "io_util.h"
+#include "student.h"
 
 namespace research_project {
 
-std::ostream &operator<<(std::ostream &os, const Student &student) {
-    os << student.number << ", " << student.name << ", "
-       << (student.is_first ? student.first_supervisor
-                            : student.second_supervisor);
-    return os;
-}
-
-/*
-学籍番号, 名前, フリガナ, 前半教員, 後半教員
-*/
-std::vector<Student> research_project_input(std::string student_filename) {
+std::pair<std::vector<Student>, std::vector<Student>> research_project_input(
+    std::string student_filename) {
     std::ifstream file(student_filename, std::ios::in);
-    std::string str_buf, str_conma_buf;
-    std::vector<Student> students;
+    std::string str_buf;
+    std::vector<Student> first_section, second_section;
     std::getline(file, str_buf);
     int student_number_index, student_name_index, first_index, second_index;
     {
@@ -40,19 +32,19 @@ std::vector<Student> research_project_input(std::string student_filename) {
         std::string name = line[student_name_index];
         std::string first = line[first_index];
         std::string second = line[second_index];
-
-        Student student(number, name, first, second);
-        insert_or_assign(students, student);
+        insert_or_assign(first_section, Student{number, name, first});
+        insert_or_assign(second_section, Student{number, name, second});
     }
-    std::cerr << "[Input is completed]" << std::endl;
-    return students;
+    return {first_section, second_section};
 }
 
-void research_project_output(std::vector<std::vector<Student>> result) {
-    std::cout << "枠番号, 学籍番号, 名前, フリガナ, 教員" << std::endl;
+void research_project_output(const std::vector<std::vector<Student>> &result) {
+    std::cout << "枠番号,学籍番号,名前,教員" << std::endl;
     for (auto slot : result) {
         for (int i = 1; auto student : slot) {
-            std::cout << i << ", " << student << std::endl;
+            std::cout << i << ", " << student.get_number() << " "
+                      << student.get_name() << " " << student.get_supervisor()
+                      << std::endl;
             i++;
         }
         std::cout << std::endl;
