@@ -4,3 +4,5 @@
 build
 
 !CMakeLists.txt
+!base/professor_label.csv
+!base/student_label.csv
