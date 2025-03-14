@@ -126,7 +126,6 @@ std::vector<Professor> professor_base_info_input(std::string filename) {
 }
 
 void output_schedule(std::vector<Student> schedule, Time time_info) {
-    std::cerr << schedule.size() << std::endl;
     assert(schedule.size() == time_info.accumulate.back());
     std::cout << "発表番号,学籍番号,氏名,審査員" << std::endl;
     for (int i = 0; i < time_info.day * time_info.section; i++) {
