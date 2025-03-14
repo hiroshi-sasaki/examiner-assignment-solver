@@ -20,3 +20,11 @@ $ cd build
 $ cmake ..
 $ make
 ```
+
+## 必須ファイル
+
+`base/` に以下のファイルを置いておく必要がある。適宜更新しておくこと。
+
+- 教員の基本情報を扱うファイル `base/professor_base_info.csv`
+- 教員のCSVのヘッダの表記ゆれを解消するためのファイル `base/professor_label.csv`
+- 学生のCSVのヘッダの表記ゆれを解消するためのファイル `base/student_label.csv`
