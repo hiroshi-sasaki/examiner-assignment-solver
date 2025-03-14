@@ -2,12 +2,12 @@
 
 ## 使用方法
 
-コマンド引数の第 1 引数には `bachelor_presentation`、 第 2 引数は時間の情報の入ったファイル名、第 3 引数には教員の基本情報の入ったファイル名、第 4 引数には教員のスケジュールが入ったCSVファイル名、第 5 引数には学生の情報の入ったCSVファイル名を与える。
+コマンド引数の第 1 引数には `bachelor_presentation`、 第 2 引数は時間の情報の入ったファイル名、第 3 引数には教員のスケジュールが入ったCSVファイル名、第 4 引数には学生の情報の入ったCSVファイル名を与える。
 
 以下に例をあげる。
 
 ```
-$ ./build/solver bachelor_presentation data.txt professor_info_base.csv professor.csv student.csv
+$ ./build/solver bachelor_presentation data.txt professor.csv student.csv
 ```
 
 ## 入力の要件
