@@ -3,6 +3,12 @@
 #include <string>
 #include <vector>
 
+struct StudentInputLabel {
+    std::vector<std::string> number_labels, name_labels, supervisor_labels,
+        main_examiner_labels, deputy_examiner_labels, first_professor_labels,
+        second_professor_labels, other_labels;
+};
+
 struct Student {
   private:
     std::string number = "N/A";
@@ -33,7 +39,8 @@ struct Student {
 
     Student(std::string, std::string, std::string);
     Student(std::string, std::string, std::string, std::string);
-    Student(std::string, std::string, std::string, std::string, std::vector<std::string>);
+    Student(std::string, std::string, std::string, std::string,
+            std::vector<std::string>);
 
     Student() = default;
 

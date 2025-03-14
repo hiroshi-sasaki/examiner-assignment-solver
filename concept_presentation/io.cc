@@ -13,10 +13,9 @@ namespace concept_presentation {
 extern int k;
 
 std::vector<Professor> professor_input(Time time_info,
-                                       std::string professor_base_info_filename,
                                        std::string professor_filename) {
-    auto professor_base_info =
-        professor_base_info_input(professor_base_info_filename);
+    auto professor_base_info = professor_base_info_input();
+    auto professor_label = professor_label_input();
 
     std::ifstream file(professor_filename, std::ios::in);
     std::string str_buf;
@@ -26,9 +25,9 @@ std::vector<Professor> professor_input(Time time_info,
     std::vector<int> time_window_index;
     {
         auto line = get_line_split_by_c(str_buf, ',');
-        name_index = get_column_index(line, "ご自身のお名前をお選びください");
+        name_index = get_column_index(line, professor_label.name_labels);
         for (auto label : time_info.time_window_label) {
-            time_window_index.emplace_back(get_column_index(line, label));
+            time_window_index.emplace_back(get_column_index(line, {label}));
         }
     }
     while (std::getline(file, str_buf)) {
@@ -50,6 +49,7 @@ std::vector<Professor> professor_input(Time time_info,
 }
 
 std::vector<Student> student_input(std::string student_filename) {
+    auto student_label = student_label_input();
     std::ifstream file(student_filename, std::ios::in);
     std::string str_buf;
     std::vector<Student> students;
@@ -60,12 +60,10 @@ std::vector<Student> student_input(std::string student_filename) {
 
         // ファイルの対象の行によって変更
         student_number_index =
-            get_column_index(line, "学籍番号／Student ID  No.");
+            get_column_index(line, student_label.number_labels);
         supervisor_name_index =
-            get_column_index(line,
-                             "主指導教員を選んでください／Choose your main "
-                             "academic supervisor.");
-        other_index = get_column_index(line, "備考／Other Notes");
+            get_column_index(line, student_label.supervisor_labels);
+        other_index = get_column_index(line, student_label.other_labels);
     }
     while (std::getline(file, str_buf)) {
         auto line = get_line_split_by_c(str_buf, ',');
@@ -82,12 +80,11 @@ std::vector<Student> student_input(std::string student_filename) {
 }
 
 std::vector<Professor> concept_presentation_input(
-    std::string time_filename, std::string professor_base_info_filename,
-    std::string professor_filename, std::string student_filename) {
+    std::string time_filename, std::string professor_filename,
+    std::string student_filename) {
     Time time_info = time_info_input(time_filename);
     k = time_info.section;
-    auto professors = professor_input(time_info, professor_base_info_filename,
-                                      professor_filename);
+    auto professors = professor_input(time_info, professor_filename);
     auto students = student_input(student_filename);
 
     for (auto student : students) {

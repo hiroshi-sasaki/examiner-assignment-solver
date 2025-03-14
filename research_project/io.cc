@@ -13,6 +13,7 @@ namespace research_project {
 
 std::pair<std::vector<Student>, std::vector<Student>> research_project_input(
     std::string student_filename) {
+    auto student_label = student_label_input();
     std::ifstream file(student_filename, std::ios::in);
     std::string str_buf;
     std::vector<Student> first_section, second_section;
@@ -20,10 +21,13 @@ std::pair<std::vector<Student>, std::vector<Student>> research_project_input(
     int student_number_index, student_name_index, first_index, second_index;
     {
         auto line = get_line_split_by_c(str_buf, ',');
-        student_number_index = get_column_index(line, "学籍番号");
-        student_name_index = get_column_index(line, "学生所属名");
-        first_index = get_column_index(line, "前半教員");
-        second_index = get_column_index(line, "後半教員");
+        student_number_index =
+            get_column_index(line, student_label.number_labels);
+        student_name_index = get_column_index(line, student_label.name_labels);
+        first_index =
+            get_column_index(line, student_label.first_professor_labels);
+        second_index =
+            get_column_index(line, student_label.second_professor_labels);
     }
     while (std::getline(file, str_buf)) {
         auto line = get_line_split_by_c(str_buf, ',');

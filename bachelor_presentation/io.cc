@@ -11,9 +11,9 @@
 namespace bachelor_presentation {
 
 void bachelor_presentation_solver::professor_input(
-    std::string professor_base_info_filename, std::string professor_filename) {
-    auto professor_base_info =
-        professor_base_info_input(professor_base_info_filename);
+    std::string professor_filename) {
+    auto professor_base_info = professor_base_info_input();
+    auto professor_label = professor_label_input();
 
     std::ifstream prof_file(professor_filename, std::ios::in);
     if (!prof_file) {
@@ -26,10 +26,10 @@ void bachelor_presentation_solver::professor_input(
     {
         auto line = get_line_split_by_c(str_buf, ',');
         professor_name_index =
-            get_column_index(line, "ご自身のお名前をお選びください");
+            get_column_index(line, professor_label.name_labels);
         for (auto label : time_info.time_window_label) {
             professor_possible_index.emplace_back(
-                get_column_index(line, label));
+                get_column_index(line, {label}));
         }
     }
 
@@ -53,6 +53,8 @@ void bachelor_presentation_solver::professor_input(
 }
 
 void bachelor_presentation_solver::student_input(std::string student_filename) {
+    auto student_label = student_label_input();
+
     std::ifstream student_file(student_filename, std::ios::in);
 
     if (!student_file) {
@@ -63,10 +65,11 @@ void bachelor_presentation_solver::student_input(std::string student_filename) {
     int student_number_index, student_name_index, supervisor_index;
     {
         auto line = get_line_split_by_c(str_buf, ',');
-        student_number_index = get_column_index(line, "学籍番号");
-        student_name_index = get_column_index(line, "氏名");
+        student_number_index =
+            get_column_index(line, student_label.number_labels);
+        student_name_index = get_column_index(line, student_label.name_labels);
         supervisor_index =
-            get_column_index(line, "主指導教員を選んでください。");
+            get_column_index(line, student_label.supervisor_labels);
     }
 
     while (std::getline(student_file, str_buf)) {
@@ -85,11 +88,11 @@ void bachelor_presentation_solver::student_input(std::string student_filename) {
     }
 }
 
-void bachelor_presentation_solver::input(
-    std::string time_filename, std::string professor_base_info_filename,
-    std::string professor_filename, std::string student_filename) {
+void bachelor_presentation_solver::input(std::string time_filename,
+                                         std::string professor_filename,
+                                         std::string student_filename) {
     time_info = time_info_input(time_filename);
-    professor_input(professor_base_info_filename, professor_filename);
+    professor_input(professor_filename);
     student_input(student_filename);
 }
 
