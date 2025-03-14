@@ -9,7 +9,8 @@
 
 namespace concept_presentation {
 
-std::vector<Professor> concept_presentation_input(std::string, std::string, std::string, std::string);
+std::vector<Professor> concept_presentation_input(std::string, std::string,
+                                                  std::string);
 void concept_presentation_output(std::vector<std::vector<Slot>>);
 
-}
+}  // namespace concept_presentation

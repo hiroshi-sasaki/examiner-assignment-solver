@@ -8,9 +8,9 @@
 namespace intermediate_presentation {
 
 intermediate_presentation_solver::intermediate_presentation_solver(
-    std::string time_filename, std::string professor_base_info_filename, std::string professor_filename,
+    std::string time_filename, std::string professor_filename,
     std::string student_filename) {
-    input(time_filename, professor_base_info_filename, professor_filename, student_filename);
+    input(time_filename, professor_filename, student_filename);
 }
 
 void intermediate_presentation_solver::professor_assign(

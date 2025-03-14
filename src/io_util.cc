@@ -15,15 +15,34 @@
 #include "student.h"
 #include "time.h"
 
+namespace filename {
+
+std::string professor_base_info_filename = "base/professor_base_info.csv";
+std::string student_label_filename = "base/student_label.csv";
+std::string professor_label_filename = "base/professor_label.csv";
+
+}  // namespace filename
+
 int get_column_index(const std::vector<std::string> &row, std::string target) {
     auto itr =
         std::find_if(std::begin(row), std::end(row),
                      [target](std::string s) -> bool { return s == target; });
     if (itr == row.end()) {
-        std::cerr << target << "という列は存在しません" << std::endl;
-        assert(0);
+        return -1;
     }
     return std::distance(std::begin(row), itr);
+}
+
+int get_column_index(const std::vector<std::string> &row,
+                     std::vector<std::string> targets) {
+    for (auto target : targets) {
+        int index = get_column_index(row, target);
+        if (index < 0) continue;
+        return index;
+    }
+    std::cerr << targets[0] << "という列は存在しません" << std::endl;
+    assert(0);
+    return -1;
 }
 
 std::vector<std::string> get_line_split_by_c(std::string row, char c) {
@@ -48,13 +67,12 @@ Time time_info_input(std::string filename) {
     {
         std::getline(file, str_buf);
         auto line = get_line_split_by_c(str_buf, ' ');
-        if(line.size() == 1) {
+        if (line.size() == 1) {
             time.section = std::stoi(line[0]);
             std::getline(file, str_buf);
             time.time_window_label = get_line_split_by_c(str_buf, ',');
             return time;
-        }
-        else if (line.size() == 2) {
+        } else if (line.size() == 2) {
             time.day = std::stoi(line[0]);
             time.section = std::stoi(line[1]);
         } else {
@@ -81,8 +99,40 @@ Time time_info_input(std::string filename) {
     return time;
 }
 
-std::vector<Professor> professor_base_info_input(std::string filename) {
-    std::ifstream file(filename, std::ios::in);
+StudentInputLabel student_label_input() {
+    StudentInputLabel label;
+    std::ifstream file(filename::student_label_filename, std::ios::in);
+    std::string str_buf;
+    std::getline(file, str_buf);
+    label.number_labels = get_line_split_by_c(str_buf, ',');
+    std::getline(file, str_buf);
+    label.name_labels = get_line_split_by_c(str_buf, ',');
+    std::getline(file, str_buf);
+    label.supervisor_labels = get_line_split_by_c(str_buf, ',');
+    std::getline(file, str_buf);
+    label.main_examiner_labels = get_line_split_by_c(str_buf, ',');
+    std::getline(file, str_buf);
+    label.deputy_examiner_labels = get_line_split_by_c(str_buf, ',');
+    std::getline(file, str_buf);
+    label.first_professor_labels = get_line_split_by_c(str_buf, ',');
+    std::getline(file, str_buf);
+    label.second_professor_labels = get_line_split_by_c(str_buf, ',');
+    std::getline(file, str_buf);
+    label.other_labels = get_line_split_by_c(str_buf, ',');
+    return label;
+}
+
+ProfessorInputLabel professor_label_input() {
+    ProfessorInputLabel labels;
+    std::ifstream file(filename::professor_label_filename, std::ios::in);
+    std::string str_buf;
+    std::getline(file, str_buf);
+    labels.name_labels = get_line_split_by_c(str_buf, ',');
+    return labels;
+}
+
+std::vector<Professor> professor_base_info_input() {
+    std::ifstream file(filename::professor_base_info_filename, std::ios::in);
     std::string str_buf;
     std::vector<Professor> professors;
     std::getline(file, str_buf);
