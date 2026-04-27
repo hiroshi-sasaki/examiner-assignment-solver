@@ -17,12 +17,12 @@ bachelor_presentation_solver::bachelor_presentation_solver(
 
 void bachelor_presentation_solver::professor_assign(
     std::vector<Student> &suzukake_schedule,
-    std::vector<Student> &oookayama_schedule) {
+    std::vector<Student> &ookayama_schedule) {
     auto professors = professors_;
-    std::vector<Professor> oookayama_professors, suzukake_professors;
+    std::vector<Professor> ookayama_professors, suzukake_professors;
     for (auto p : professors) {
         if (p.get_campus() == "O") {
-            oookayama_professors.emplace_back(p);
+            ookayama_professors.emplace_back(p);
         } else {
             suzukake_professors.emplace_back(p);
         }
@@ -32,7 +32,7 @@ void bachelor_presentation_solver::professor_assign(
         assign_count[student.get_supervisor()]++;
         student.assign_professor(student.get_supervisor());
     }
-    for (auto &student : oookayama_schedule) {
+    for (auto &student : ookayama_schedule) {
         if (!student.valid()) continue;
         assign_count[student.get_supervisor()]++;
         student.assign_professor(student.get_supervisor());
@@ -40,7 +40,7 @@ void bachelor_presentation_solver::professor_assign(
     auto can_assign = [&](int i, std::string name) -> bool {
         auto student = i < time_info.count_per_day[0]
                            ? suzukake_schedule[i]
-                           : oookayama_schedule[i - time_info.count_per_day[0]];
+                           : ookayama_schedule[i - time_info.count_per_day[0]];
         if (!student.valid() || student.assign_count() == k) return false;
         for (auto professor : student.get_assign_professors()) {
             if (professor == name) return false;
@@ -59,7 +59,7 @@ void bachelor_presentation_solver::professor_assign(
                 return false;
             }
         }
-        for (auto student : oookayama_schedule) {
+        for (auto student : ookayama_schedule) {
             if (!student.valid()) continue;
             if (student.assign_count() < k) {
                 return false;
@@ -69,7 +69,7 @@ void bachelor_presentation_solver::professor_assign(
     };
     int c = 0;
     while (!validator()) {
-        std::sort(oookayama_professors.begin(), oookayama_professors.end(),
+        std::sort(ookayama_professors.begin(), ookayama_professors.end(),
                   [&](auto lhs, auto rhs) -> bool {
                       return assign_count[lhs.get_name()] <
                              assign_count[rhs.get_name()];
@@ -79,12 +79,12 @@ void bachelor_presentation_solver::professor_assign(
                       return assign_count[lhs.get_name()] <
                              assign_count[rhs.get_name()];
                   });
-        for (auto prof : oookayama_professors) {
+        for (auto prof : ookayama_professors) {
             int cont = 0;
             for (int i = 0; i < time_info.count_per_day[1]; i++) {
                 if (can_assign(i + time_info.count_per_day[0],
                                prof.get_name())) {
-                    oookayama_schedule[i].assign_professor(prof.get_name());
+                    ookayama_schedule[i].assign_professor(prof.get_name());
                     cont++;
                     assign_count[prof.get_name()]++;
                 }
@@ -108,11 +108,11 @@ void bachelor_presentation_solver::professor_assign(
 
 void bachelor_presentation_solver::run() {
     auto professors = professors_;
-    std::vector<Professor> oookayama, suzukake;
+    std::vector<Professor> ookayama, suzukake;
     for (auto prof : professors) {
         if (prof.get_students().empty()) continue;
         if (prof.get_campus() == "O") {
-            oookayama.emplace_back(prof);
+            ookayama.emplace_back(prof);
         } else {
             assert(prof.get_campus() == "S");
             suzukake.emplace_back(prof);
@@ -122,16 +122,16 @@ void bachelor_presentation_solver::run() {
                                       time_info, suzukake);
     auto suzukake_schedule = construct_schedule(
         0, time_info.accumulate_count_per_day[1], time_info, suzukake_sol);
-    auto oookayama_sol = bit_dp_solver(time_info.accumulate_count_per_day[1],
+    auto ookayama_sol = bit_dp_solver(time_info.accumulate_count_per_day[1],
                                        time_info.accumulate_count_per_day[2],
-                                       time_info, oookayama);
-    auto oookayama_schedule = construct_schedule(
+                                       time_info, ookayama);
+    auto ookayama_schedule = construct_schedule(
         time_info.accumulate_count_per_day[1],
-        time_info.accumulate_count_per_day[2], time_info, oookayama_sol);
-    professor_assign(suzukake_schedule, oookayama_schedule);
+        time_info.accumulate_count_per_day[2], time_info, ookayama_sol);
+    professor_assign(suzukake_schedule, ookayama_schedule);
     auto schedule = suzukake_schedule;
-    schedule.insert(schedule.end(), oookayama_schedule.begin(),
-                    oookayama_schedule.end());
+    schedule.insert(schedule.end(), ookayama_schedule.begin(),
+                    ookayama_schedule.end());
     output_schedule(schedule, time_info);
 }
 

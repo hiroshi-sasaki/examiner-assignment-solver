@@ -28,8 +28,10 @@ int min_left(const Time &time_info, Professor professor, int now) {
     while (now + sz <= time_info.accumulate.back()) {
         bool flag = true;
         for (int i = 0; auto student : professor.get_students()) {
-            flag &= check(time_info, student, now + i);
-            if (!flag) break;
+            if (!check(time_info, student, now + i)) {
+                flag = false;
+                break;
+            }
             i++;
         }
         if (flag) return now;
@@ -70,6 +72,75 @@ std::vector<Professor> bit_dp_solver(int start, int end, const Time &time_info,
         }
     }
     if (dp.back() > end) {
+        std::cerr << "\n=== SCHEDULING FAILED - DIAGNOSTIC INFORMATION ===" << std::endl;
+        std::cerr << "Cannot find valid schedule. Analyzing constraints...\n" << std::endl;
+
+        // Show which professors have students
+        std::cerr << "Professors to schedule (" << n << " total):" << std::endl;
+        for (int i = 0; i < n; i++) {
+            std::cerr << "  [" << i << "] " << professors[i].get_name()
+                      << ": " << professors[i].get_students().size() << " students" << std::endl;
+        }
+
+        // Find which states are reachable
+        int reachable = 0;
+        for (int bit = 0; bit < (1 << n); bit++) {
+            if (dp[bit] < INF) reachable++;
+        }
+        std::cerr << "\nReachable DP states: " << reachable << " / " << (1 << n) << std::endl;
+
+        // Run detailed analysis for reasonable n (complexity: O(n * 2^n))
+        // For n=15: 15 * 32768 = ~500K operations (acceptable)
+        if (n <= 15) {
+            std::cerr << "\nChecking which professors can be placed first:" << std::endl;
+            for (int i = 0; i < n; i++) {
+                int r = min_left(time_info, professors[i], start);
+                if (r == INF) {
+                    std::cerr << "  ✗ " << professors[i].get_name()
+                              << " - CANNOT be placed anywhere (check student/professor availability)" << std::endl;
+                } else {
+                    int end_pos = r + professors[i].get_students().size();
+                    std::cerr << "  ✓ " << professors[i].get_name()
+                              << " can start at position " << r << " (ends at " << end_pos << ")" << std::endl;
+                }
+            }
+
+            // Check which professors are blocking progress
+            std::cerr << "\nAnalyzing why final state is unreachable..." << std::endl;
+            std::vector<int> never_scheduled;
+            for (int i = 0; i < n; i++) {
+                bool can_schedule = false;
+                for (int bit = 0; bit < (1 << n); bit++) {
+                    if (dp[bit] == INF) continue;
+                    if ((bit >> i) & 1) continue; // already scheduled in this state
+
+                    int r = min_left(time_info, professors[i], dp[bit]);
+                    if (r != INF && r + professors[i].get_students().size() <= end) {
+                        can_schedule = true;
+                        break;
+                    }
+                }
+                if (!can_schedule) {
+                    never_scheduled.push_back(i);
+                }
+            }
+
+            if (!never_scheduled.empty()) {
+                std::cerr << "\nProfessors that CANNOT be scheduled in any valid position:" << std::endl;
+                for (int i : never_scheduled) {
+                    std::cerr << "  ✗ " << professors[i].get_name() << std::endl;
+                }
+            }
+        }
+
+        std::cerr << "\nTotal available slots: " << (end - start) << std::endl;
+        int total_students = 0;
+        for (int i = 0; i < n; i++) {
+            total_students += professors[i].get_students().size();
+        }
+        std::cerr << "Total students to schedule: " << total_students << std::endl;
+        std::cerr << "\n=== END DIAGNOSTIC ===" << std::endl;
+
         assert(0);
         return {};
     }

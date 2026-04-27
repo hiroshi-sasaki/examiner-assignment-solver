@@ -1,13 +1,13 @@
-# 修論発表
+# 中間審査
 
 ## 使用方法
 
-コマンド引数の第 1 引数には `master_presentation`、第 2 引数は時間の情報の入ったCSVファイル名、第 3 引数には教員のスケジュールが入ったCSVファイル名、第 4 引数には学生の情報の入ったCSVファイル名を与える。
+コマンド引数の第 1 引数には `intermediate_examination` 第 2 引数は時間の情報の入ったCSVファイル名、第 3 引数には教員のスケジュールが入ったCSVファイル名、第 4 引数には学生の情報の入ったCSVファイル名を与える。
 
 以下に例をあげる。
 
 ```
-$ ./build/solver master_presentation data.txt professor.csv student.csv
+$ ./build/solver intermediate_examination info.txt professors.csv students.csv
 ```
 
 ## 入力の要件
@@ -15,16 +15,15 @@ $ ./build/solver master_presentation data.txt professor.csv student.csv
 時間の情報の入ったファイルは以下のような構成である。
 
 ```
-すずかけの日数 大岡山の日数 一日の予定区分数
+中間審査の日数 一日の予定区分数
 区分1に入れれる発表数,...,区分nに入れれる発表数
 区分1のラベル名,...,区分nのラベル名
 ```
 
 ```
-1 1 5
-6 6 6 5 7 5 5 5 5 8
-a,b,c,d,e,f,g,h,i,j
-
+1 5
+6 6 6 5 7
+a,b,c,d,e
 ```
 
 ### 教員のスケジュールが入ったCSVファイル名
@@ -48,18 +47,13 @@ C,OK,OK,...,OK
 
 | 列名 | 説明 |
 | ---- | ---- |
-| 学籍番号 | 学籍番号 |
-| 学生氏名 | 学生の氏名 |
-| 指導教員 | 指導教員名 |
-| 副審査1 | 副審査員1の名前 |
-| 副審査2 | 副審査員2の名前 |
-| 副審査3 | 副審査員3の名前 |
-| 副審査4 | 副審査員4の名前 |
-| 副審査5 | 副審査員5の名前 |
+| 学籍番号／Student ID  No. | 学籍番号 |
+| 氏名／Name | 学生の氏名 |
+| 主指導教員を選んでください／Choose your main academic supervisor. | 指導教員名 |
 
 ```
-学籍番号,学生氏名,指導教員,副審査1,副審査2,副審査3,副審査4,副審査5
-1,X,A,B,C,D,E
-2,Y,A,B,C,D,E
-3,Z,A,B,C,D,E
+学籍番号／Student ID  No.,氏名／Name,主指導教員を選んでください／Choose your main academic supervisor.
+1,X,A
+2,Y,B
+3,Z,C
 ```

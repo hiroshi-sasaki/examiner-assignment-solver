@@ -1,7 +1,9 @@
 *.csv
 *.out
 *.txt
-build
+build*
+.cache
+.DS_Store
 
 !CMakeLists.txt
 !base/professor_label.csv

@@ -22,4 +22,26 @@ void Time::init() {
                 accumulate[i * section + j] + time[i * section + j];
         }
     }
+
+    parse_campus_from_labels();
+}
+
+void Time::parse_campus_from_labels() {
+    suzukake_slots.clear();
+    ookayama_slots.clear();
+
+    for (int i = 0; i < time_window_label.size(); i++) {
+        const std::string& label = time_window_label[i];
+        if (label.find("すずかけ台") != std::string::npos) {
+            // Add all slots for this time window to suzukake
+            for (int j = accumulate[i]; j < accumulate[i + 1]; j++) {
+                suzukake_slots.push_back(j);
+            }
+        } else if (label.find("大岡山") != std::string::npos) {
+            // Add all slots for this time window to ookayama
+            for (int j = accumulate[i]; j < accumulate[i + 1]; j++) {
+                ookayama_slots.push_back(j);
+            }
+        }
+    }
 }

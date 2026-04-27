@@ -117,6 +117,32 @@ void master_presentation_solver::student_input(std::string student_filename) {
                 if (s[j] == 'x') is_possible[j] = 'x';
             }
         }
+
+        // Check if student has no available slots and show detailed conflict info
+        bool all_unavailable = true;
+        for (char c : is_possible) {
+            if (c == 'o') {
+                all_unavailable = false;
+                break;
+            }
+        }
+        if (all_unavailable) {
+            std::cerr << "Error: Student " << name <<
+              " has no available time slots!" << std::endl;
+            std::cerr << itr->get_is_possible() << " " << main_examiner << std::endl;
+            for (auto& prof_name : assign_professors) {
+                if (prof_name != main_examiner) {
+                    auto prof_itr = std::find_if(professors_.begin(),
+                        professors_.end(),
+                                                 [&prof_name](Professor p) { return p.get_name() == prof_name; });
+                    if (prof_itr != professors_.end()) {
+                        std::cerr << prof_itr->get_is_possible() << " " <<
+                          prof_name << std::endl;
+                    }
+                }
+            }
+            std::cerr << "----------------------------------------" << std::endl;
+        }
         itr->add_student({student_number, name, main_examiner, is_possible,
                           assign_professors});
     }

@@ -1,10 +1,10 @@
 #include <cassert>
 
-#include "bachelor_presentation/solver.h"
-#include "concept_presentation/solver.h"
-#include "intermediate_examination/solver.h"
-#include "master_presentation/solver.h"
-#include "research_project/solver.h"
+#include "events/bachelor_presentation/solver.h"
+#include "events/concept_presentation/solver.h"
+#include "events/intermediate_examination/solver.h"
+#include "events/master_presentation/solver.h"
+#include "events/research_project/solver.h"
 
 int main(int argc, char *argv[]) {
     assert(argc > 1);
@@ -13,8 +13,8 @@ int main(int argc, char *argv[]) {
         std::string time_info_filename = argv[2];
         std::string professor_filename = argv[3];
         std::string student_filename = argv[4];
-        concept_presentation::run(time_info_filename,
-                                  professor_filename, student_filename);
+        concept_presentation::run(time_info_filename, professor_filename,
+                                  student_filename);
     } else if (event == "research_project") {
         std::string student_filename = argv[2];
         int parallel = std::stoi(argv[3]);

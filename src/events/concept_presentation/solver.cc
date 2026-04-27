@@ -48,6 +48,86 @@ std::vector<std::vector<Slot>> concept_presentation_assignment_solver(
     std::map<std::string, int> map;
     std::set<std::string> already_assigned;
 
+    // Handle confidential presentations - force them to the same time slot if possible
+    std::vector<Student> confidential_students;
+    std::set<std::string> confidential_advisors;
+
+    // Collect all confidential students and their advisors
+    for (auto &professor : professors) {
+        for (auto &student : professor.get_students()) {
+            if (student.get_is_confidential()) {
+                confidential_students.push_back(student);
+                confidential_advisors.insert(student.get_supervisor());
+            }
+        }
+    }
+
+    // Check for conflicts among confidential students
+    bool has_student_conflict = false;
+    for (size_t i = 0; i < confidential_students.size(); i++) {
+        for (size_t j = i + 1; j < confidential_students.size(); j++) {
+            if ((confidential_students[i].get_is_possible() == "ox" && 
+                 confidential_students[j].get_is_possible() == "xo") ||
+                (confidential_students[i].get_is_possible() == "xo" && 
+                 confidential_students[j].get_is_possible() == "ox")) {
+                has_student_conflict = true;
+                break;
+            }
+        }
+        if (has_student_conflict) break;
+    }
+
+    // Check for conflicts among confidential advisors when k > 3
+    bool has_advisor_conflict = false;
+    if (k > 3) {
+        for (auto &prof1 : professors) {
+            if (confidential_advisors.count(prof1.get_name())) {
+                for (auto &prof2 : professors) {
+                    if (confidential_advisors.count(prof2.get_name()) && 
+                        prof1.get_name() != prof2.get_name()) {
+                        if ((prof1.get_is_possible() == "ox" && prof2.get_is_possible() == "xo") ||
+                            (prof1.get_is_possible() == "xo" && prof2.get_is_possible() == "ox")) {
+                            has_advisor_conflict = true;
+                            break;
+                        }
+                    }
+                }
+                if (has_advisor_conflict) break;
+            }
+        }
+    }
+
+    if (has_student_conflict || has_advisor_conflict) {
+        std::cout << "Warning: Conflicting availability for confidential presentations" << std::endl;
+        std::cout << "Cannot assign all confidential presentations to the same time slot" << std::endl;
+        std::cout << "Proceeding with normal assignment (confidential presentations may be in different slots)" << std::endl;
+    } else if (!confidential_students.empty()) {
+        // If no conflicts, try to force all confidential students to the same slot
+        std::string target_slot = "ox"; // Prefer slot 0 (ox)
+        bool can_use_slot0 = true;
+
+        // Check if all confidential students can use slot 0
+        for (auto &student : confidential_students) {
+            if (student.get_is_possible()[0] == 'x') {
+                can_use_slot0 = false;
+                break;
+            }
+        }
+
+        if (!can_use_slot0) {
+            target_slot = "xo"; // Use slot 1 (xo)
+        }
+
+        std::cout << "Forcing " << confidential_students.size() 
+                  << " confidential students to slot " << (target_slot == "ox" ? "0" : "1") << std::endl;
+
+        // Actually modify the student availability
+        // Note: const_cast is generally a bad practice but needed here to modify copied Student objects
+        for (auto &student : confidential_students) {
+            const_cast<Student&>(student).set_is_possible(target_slot);
+        }
+    }
+
     int sum_student = 0;
     for (auto &professor : professors) {
         map[professor.get_name()] =

@@ -67,8 +67,13 @@ Time time_info_input(std::string filename) {
     {
         std::getline(file, str_buf);
         auto line = get_line_split_by_c(str_buf, ' ');
-        if (line.size() == 1) {
+        if (line[0] == "[concept_presentation]") {
+            std::getline(file, str_buf);
+            line = get_line_split_by_c(str_buf, ' ');
             time.section = std::stoi(line[0]);
+            std::getline(file, str_buf);
+            line = get_line_split_by_c(str_buf, ' ');
+            time.max_assign = std::stoi(line[0]);
             std::getline(file, str_buf);
             time.time_window_label = get_line_split_by_c(str_buf, ',');
             return time;
@@ -77,9 +82,9 @@ Time time_info_input(std::string filename) {
             time.section = std::stoi(line[1]);
         } else {
             time.suzukake_day_count = std::stoi(line[0]);
-            time.oookayama_day_count = std::stoi(line[1]);
+            time.ookayama_day_count = std::stoi(line[1]);
             time.section = std::stoi(line[2]);
-            time.day = time.suzukake_day_count + time.oookayama_day_count;
+            time.day = time.suzukake_day_count + time.ookayama_day_count;
         }
     }
     {

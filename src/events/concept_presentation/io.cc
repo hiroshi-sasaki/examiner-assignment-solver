@@ -11,6 +11,7 @@
 namespace concept_presentation {
 
 extern int k;
+extern int max_assign;
 
 std::vector<Professor> professor_input(Time time_info,
                                        std::string professor_filename) {
@@ -50,11 +51,12 @@ std::vector<Professor> professor_input(Time time_info,
 
 std::vector<Student> student_input(std::string student_filename) {
     auto student_label = student_label_input();
+    auto professor_base_info = professor_base_info_input();
     std::ifstream file(student_filename, std::ios::in);
     std::string str_buf;
     std::vector<Student> students;
     std::getline(file, str_buf);
-    int student_number_index, supervisor_name_index, other_index;
+    int student_number_index, supervisor_name_index, other_index, confidential_index;
     {
         auto line = get_line_split_by_c(str_buf, ',');
 
@@ -64,17 +66,62 @@ std::vector<Student> student_input(std::string student_filename) {
         supervisor_name_index =
             get_column_index(line, student_label.supervisor_labels);
         other_index = get_column_index(line, student_label.other_labels);
+
+        // Find confidential column by looking for the Japanese text
+        confidential_index = -1;
+        for (size_t i = 0; i < line.size(); i++) {
+            if (line[i].find("機密保持の要否について回答") != std::string::npos) {
+                confidential_index = i;
+                break;
+            }
+        }
     }
     while (std::getline(file, str_buf)) {
         auto line = get_line_split_by_c(str_buf, ',');
+        if (line.size() <= student_number_index || line.size() <= supervisor_name_index) {
+            // Skip lines that don't have the basic required columns
+            continue;
+        }
         std::string number = line[student_number_index];
         std::string supervisor = line[supervisor_name_index];
+
         std::string is_possible = "oo";
-        if (line[other_index] == "1")
-            is_possible[1] = 'x';
-        else if (line[other_index] == "2")
-            is_possible[0] = 'x';
-        insert_or_assign(students, {number, "", supervisor, is_possible});
+
+        // Check all columns for time slot preferences (robust against CSV parsing issues)
+        for (const auto& col : line) {
+            if (col.find("コアタイム1希望") != std::string::npos) {
+                is_possible = "ox"; // Force to slot 0 only
+                break;
+            } else if (col.find("コアタイム2希望") != std::string::npos) {
+                is_possible = "xo"; // Force to slot 1 only
+                break;
+            }
+        }
+
+        // Parse confidential status
+        bool is_confidential = false;
+        if (confidential_index >= 0 && line.size() > confidential_index) {
+            is_confidential = line[confidential_index].find("必要") != std::string::npos;
+        }
+
+        // Validate that supervisor exists in professor base info
+        bool supervisor_found = false;
+        for (const auto& prof : professor_base_info) {
+            if (prof.is_same_name(supervisor)) {
+                supervisor_found = true;
+                break;
+            }
+        }
+
+        if (!supervisor_found) {
+            std::cerr << "Error: Student " << number
+                      << " has supervisor '" << supervisor
+                      << "' who was not found in professor_base_info.csv" << std::endl;
+            std::cerr << "Please add this supervisor to professor_base_info.csv or fix the supervisor name" << std::endl;
+            exit(1);
+        }
+
+        insert_or_assign(students, {number, "", supervisor, is_possible, is_confidential});
     }
     return students;
 }
@@ -84,6 +131,7 @@ std::vector<Professor> concept_presentation_input(
     std::string student_filename) {
     Time time_info = time_info_input(time_filename);
     k = time_info.section;
+    max_assign = time_info.max_assign;
     auto professors = professor_input(time_info, professor_filename);
     auto students = student_input(student_filename);
 

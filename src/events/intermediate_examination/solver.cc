@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <random>
 
 #include "bit_dp_solver.h"
 #include "io_util.h"
@@ -16,6 +17,12 @@ intermediate_presentation_solver::intermediate_presentation_solver(
 void intermediate_presentation_solver::professor_assign(
     std::vector<Student> &schedule) {
     auto professors = professors_;
+
+    // Initialize assign_count with all professors
+    for (const auto& prof : professors) {
+        assign_count[prof.get_name()] = 0;
+    }
+
     for (auto &student : schedule) {
         if (!student.valid()) continue;
         assign_count[student.get_supervisor()]++;
@@ -46,12 +53,35 @@ void intermediate_presentation_solver::professor_assign(
         return true;
     };
     while (!validator()) {
-        std::vector<std::pair<int, std::string>> s;
+        std::vector<std::tuple<int, int, std::string>> s;
         for (auto [name, count] : assign_count) {
-            s.emplace_back(count, name);
+            // Find professor type for priority (lower number = higher priority)
+            int rank_priority = 2; // default to assistant priority
+            for (const auto& prof : professors_) {
+                if (prof.get_name() == name) {
+                    rank_priority = static_cast<int>(prof.get_professor_type());
+                    break;
+                }
+            }
+            s.emplace_back(rank_priority, count, name);
         }
         std::sort(s.begin(), s.end());
-        for (auto [count_, name] : s) {
+
+        // Shuffle professors with same counts and ranks for fairness
+        static std::random_device rd;
+        static std::mt19937 rng(rd());
+        auto it = s.begin();
+        while (it != s.end()) {
+            auto next = it;
+            // Find all entries with same count and rank
+            while (next != s.end() && std::get<0>(*next) == std::get<0>(*it) && std::get<1>(*next) == std::get<1>(*it)) {
+                ++next;
+            }
+            std::shuffle(it, next, rng);
+            it = next;
+        }
+
+        for (auto [rank_, count_, name] : s) {
             int now_assign = 0;
             for (int i = 0; i < schedule.size(); i++) {
                 if (can_assign(i, name)) {
@@ -63,7 +93,31 @@ void intermediate_presentation_solver::professor_assign(
             }
         }
     }
+
+    auto final_count = count_final_assignments(schedule);
+
+    std::cout << "\nAssignment Summary:\n";
+    std::cout << "============================\n";
+    for (const auto& [name, count] : final_count) {
+        std::cout << name << ": " << count << " students\n";
+    }
+    std::cout << "============================\n\n";
+
     return;
+}
+
+std::map<std::string, int> intermediate_presentation_solver::count_final_assignments(const std::vector<Student>& schedule) {
+    std::map<std::string, int> final_count;
+    for (const auto& prof : professors_) {
+        final_count[prof.get_name()] = 0;
+    }
+    for (const auto& student : schedule) {
+        if (!student.valid()) continue;
+        for (const auto& prof_name : student.get_assign_professors()) {
+            final_count[prof_name]++;
+        }
+    }
+    return final_count;
 }
 
 void intermediate_presentation_solver::run() {

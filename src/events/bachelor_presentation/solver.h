@@ -17,7 +17,7 @@ struct bachelor_presentation_solver {
     void input(std::string, std::string, std::string);
     void output(std::vector<Student>) const;
 
-    void professor_assign(std::vector<Student> &suzukake_schedule, std::vector<Student> &oookayama_schedule);
+    void professor_assign(std::vector<Student> &suzukake_schedule, std::vector<Student> &ookayama_schedule);
 
   public:
     bachelor_presentation_solver(std::string, std::string,

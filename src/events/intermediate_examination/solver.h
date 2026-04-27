@@ -17,6 +17,7 @@ struct intermediate_presentation_solver {
     void input(std::string, std::string, std::string);
 
     void professor_assign(std::vector<Student>&);
+    std::map<std::string, int> count_final_assignments(const std::vector<Student>& schedule);
 
   public:
     intermediate_presentation_solver(std::string, std::string, std::string);

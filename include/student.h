@@ -19,6 +19,7 @@ struct Student {
     std::vector<std::string> assign_professors;
 
     std::string affiliation = "";
+    bool is_confidential = false;
 
   public:
     std::string get_number() const;
@@ -28,9 +29,11 @@ struct Student {
     std::vector<std::string> get_assign_professors() const;
     int assign_count() const;
     std::string get_affiliation() const;
+    bool get_is_confidential() const;
 
     void set_supervisor(std::string);
     void set_affiliation(std::string);
+    void set_is_possible(std::string);
 
     bool can_assign(int) const;
     bool valid() const;
@@ -39,6 +42,7 @@ struct Student {
 
     Student(std::string, std::string, std::string);
     Student(std::string, std::string, std::string, std::string);
+    Student(std::string, std::string, std::string, std::string, bool);
     Student(std::string, std::string, std::string, std::string,
             std::vector<std::string>);
 

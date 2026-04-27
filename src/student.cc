@@ -14,6 +14,14 @@ Student::Student(std::string number_, std::string name_,
       is_possible(is_possible_) {}
 
 Student::Student(std::string number_, std::string name_,
+                 std::string supervisor_, std::string is_possible_, bool is_confidential_)
+    : number(number_),
+      name(name_),
+      supervisor(supervisor_),
+      is_possible(is_possible_),
+      is_confidential(is_confidential_) {}
+
+Student::Student(std::string number_, std::string name_,
                  std::string supervisor_, std::string is_possible_,
                  std::vector<std::string> assign_professors_)
     : number(number_),
@@ -50,12 +58,20 @@ std::string Student::get_affiliation() const {
     return affiliation;
 }
 
+bool Student::get_is_confidential() const {
+    return is_confidential;
+}
+
 void Student::set_supervisor(std::string supervisor_) {
     supervisor = supervisor_;
 }
 
 void Student::set_affiliation(std::string affiliation_) {
     affiliation = affiliation_;
+}
+
+void Student::set_is_possible(std::string is_possible_) {
+    is_possible = is_possible_;
 }
 
 bool Student::can_assign(int i) const {

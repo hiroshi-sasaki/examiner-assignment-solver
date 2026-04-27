@@ -4,10 +4,10 @@
 
 コマンド引数の第 1 引数には `concept_presentation` 、第 2 引数は時間の情報の入ったファイル名、第 3 引数には教員のスケジュールが入ったCSVファイル名、第 4 引数には学生の情報の入ったCSVファイル名を与える。
 
-以下に例をあげる。ファイル名はそれぞれ `professor_base_info.csv`, `professor.csv`, `student.csv` としている。
+以下に例をあげる。
 
 ```
-$ ./build/solver concept_presentation time.txt professor.csv student.csv
+$ ./build/solver concept_presentation info.txt professors.csv students.csv
 ```
 
 ## 入力の中身
@@ -15,11 +15,17 @@ $ ./build/solver concept_presentation time.txt professor.csv student.csv
 時間の情報の入ったファイルは以下のような構成である。
 
 ```
+ラベル
 審査員数
+審査員あたりの最大審査学生数
 1枠目のラベル名,2枠目のラベル名
 ```
 
+例：
+
 ```
+[concept_presentation]
+5
 3
 1枠目,2枠目
 ```
